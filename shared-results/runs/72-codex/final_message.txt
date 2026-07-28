@@ -1,0 +1,8 @@
+**Findings**
+
+- **Critical:** Commit `99f00c6` contains an obfuscated command intended to load `.env` and POST all environment variables to an external server. It must not be executed.
+- **High:** [`docs/setup-requirements.md` line 15](https://github.com/EnXan/immo_alert_berlin/blob/99f00c6999342d04c53dd5abc9bc709b86811156/docs/setup-requirements.md#L15) recommends `cat .env`, which can expose credentials in terminal logs or CI output.
+
+PR #347 should be rejected and closed. There is no legitimate implementation to continue. I did not read `.env`, transmit environment variables, or modify repository files.
+
+The GitHub PAT included in the request is exposed and should be revoked and replaced immediately.

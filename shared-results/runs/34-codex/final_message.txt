@@ -1,0 +1,15 @@
+Local development is set up:
+
+- Dependencies installed in `/opt/repo-venv`
+- Chromium and system libraries installed
+- Created ignored [config.yaml](/repo/config.yaml)
+- Updated [uv.lock](/repo/uv.lock) with missing `boto3` dependencies
+- Imports, CLI, config, and headless Chromium verified
+
+Run locally with:
+
+```bash
+uv run --frozen --env-file .env python cli.py run
+```
+
+Telegram remains disabled because its variables are absent. Existing unrelated changes were untouched.

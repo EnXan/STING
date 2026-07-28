@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Installed locked Python dependencies with `uv`
+- Updated stale `uv.lock` for the existing `boto3` dependency
+- Created ignored `config.yaml`
+- Installed Playwright/Patchright browsers and system libraries
+- Passed Crawl4AI doctor, Chromium smoke test, imports, config parsing, and compilation
+
+To run with local environment values:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Existing user changes in `AGENTS.md`, `CLAUDE.md`, and `README.md` were untouched.

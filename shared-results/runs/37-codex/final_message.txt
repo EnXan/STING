@@ -1,0 +1,14 @@
+Local development setup is complete:
+
+- Installed locked Python dependencies and Chromium.
+- Created ignored [`config.yaml`](/repo/config.yaml).
+- Updated stale [`uv.lock`](/repo/uv.lock) to include `boto3`.
+- Verified imports, CLI, config parsing, and headless Chromium.
+
+Use `.env` with:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Telegram remains disabled because its credentials are absent. Existing unrelated changes were untouched.

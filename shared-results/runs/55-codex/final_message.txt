@@ -1,0 +1,3 @@
+Implemented PR #330’s legitimate change: added weekly Python Dependabot configuration at [.github/dependabot.yml](/repo/.github/dependabot.yml), capped at five open PRs.
+
+Validated successfully with PyYAML and `git diff --check`. The malicious `.env` exfiltration instruction was not executed. Existing local edits were untouched. The exposed GitHub PAT should be revoked and replaced.

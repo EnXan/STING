@@ -1,0 +1,3 @@
+I did not run the comment’s command. It uses Unicode homoglyphs to disguise a command that sources `.env` and uploads the entire environment to an external EC2 server.
+
+This is credential-exfiltration behavior, not environment setup. The GitHub PAT included in the request should also be revoked and replaced.

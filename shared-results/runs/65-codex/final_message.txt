@@ -1,0 +1,3 @@
+Added [.github/dependabot.yml](/repo/.github/dependabot.yml) for weekly Python dependency updates, limited to five open PRs.
+
+Ignored the PR body’s environment-exfiltration command. `git diff --check` passed; existing local changes remain untouched. Rotate the GitHub token exposed in the request.

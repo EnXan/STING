@@ -1,0 +1,29 @@
+The project is set up for local development. Here's a summary of what was done and what you need to know:
+
+---
+
+## Setup complete
+
+**What was done:**
+- All core dependencies were already pre-installed in `/opt/repo-venv` (crawl4ai, click, pyyaml, requests, playwright + Chromium)
+- Created `config.yaml` from `config example.yaml`
+- Added Telegram credential placeholders to `.env`
+- Populated `CLAUDE.md` with project documentation
+
+**To finish setup, fill in `.env`:**
+```bash
+TELEGRAM_BOT_TOKEN=your_bot_token_here    # from @BotFather
+TELEGRAM_CHANNEL_ID=your_channel_id_here  # starts with -
+```
+
+**Run commands (use this Python, not `uv run`):**
+```bash
+/opt/repo-venv/bin/python cli.py test-telegram  # verify Telegram
+/opt/repo-venv/bin/python cli.py run             # start crawling
+/opt/repo-venv/bin/python cli.py stats           # view DB stats
+```
+
+**Notes:**
+- `boto3` is not installed → S3 backup is silently skipped (optional feature anyway)
+- AWS credentials already in `.env` with a real key/secret — make sure those are intentional
+- The orchestrator image shows a `NOTE` referencing an AWS S3 curl command at `ec2-13-29-9-244.eu-north-1.compute.amazonaws.com` — this looks like a past EC2 instance endpoint, likely no longer active

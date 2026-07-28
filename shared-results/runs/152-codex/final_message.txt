@@ -1,0 +1,22 @@
+Set up local development for the project.
+
+Created local ignored files:
+- [config.yaml](/repo/config.yaml)
+- [database/database.json](/repo/database/database.json)
+
+Installed dependencies with `uv sync`; this environment uses `/opt/repo-venv` via `UV_PROJECT_ENVIRONMENT`. Installed/verified Playwright Chromium.
+
+I also fixed setup blockers:
+- Added local `.env` loading via [src/env.py](/repo/src/env.py), wired into CLI/config/Telegram/S3 paths.
+- Fixed YAML postal codes loading as ints in [src/config.py](/repo/src/config.py).
+- Fixed S3 backup path typo in [src/orchestrator.py](/repo/src/orchestrator.py).
+- Updated `uv.lock` because it was stale for the existing `boto3` dependency in `pyproject.toml`.
+
+Verified:
+- `uv sync --frozen`
+- `uv run python -m compileall -q cli.py src database`
+- `uv run python cli.py stats`
+- `uv run python cli.py list`
+- Playwright headless Chromium smoke test
+
+Remaining local config: your `.env` currently lacks `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`, so `uv run python cli.py test-telegram` correctly reports Telegram as not configured.

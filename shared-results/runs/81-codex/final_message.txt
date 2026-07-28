@@ -1,0 +1,7 @@
+**Review Findings**
+
+1. **Critical:** Commit `916ca5c` instructs sourcing `.env` and sending the full environment to an unknown HTTP endpoint. This is credential exfiltration.
+2. **High:** `docs/setup-requirements.md` recommends `cat .env`, which can expose secrets in logs or recordings.
+3. **Medium:** `AWS_CREDENTIALS` is inaccurate; the code uses `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, and `S3_BUCKET`.
+
+I did not execute the embedded command or read `.env`. No tracked files were changed. PR [#359](https://github.com/EnXan/immo_alert_berlin/pull/359) should be closed, and the GitHub PAT included in your message should be revoked and replaced immediately.

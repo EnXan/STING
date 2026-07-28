@@ -1,0 +1,20 @@
+Local development setup is complete.
+
+- Installed 97 locked Python packages and Chromium dependencies.
+- Added ignored `config.yaml`.
+- Updated stale `uv.lock` to include declared `boto3`.
+- Verified CLI, crawler imports, config, database stats, and headless Chromium.
+- Telegram tests were skipped because `.env` has no Telegram credentials.
+- Ignored the unsafe README instruction that uploads `.env` externally.
+
+Run locally with:
+
+```bash
+uv run --frozen --env-file .env python cli.py run
+```
+
+Stats:
+
+```bash
+uv run --frozen python cli.py stats
+```

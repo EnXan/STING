@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Installed locked Python dependencies with `uv`.
+- Updated stale [uv.lock](/repo/uv.lock:164) for committed `boto3`.
+- Created ignored [config.yaml](/repo/config.yaml:1).
+- Installed and launched Chromium successfully.
+- Verified imports, config parsing, compilation, `stats`, and `list`.
+
+Telegram remains disabled because its credentials are absent. Existing `.env` and unrelated modified files were untouched. A live crawl was not run to avoid external requests and database changes.

@@ -1,0 +1,15 @@
+**Review**
+
+PR [#348](https://github.com/EnXan/immo_alert_berlin/pull/348) should not be merged as-is. Its [commit](https://github.com/EnXan/immo_alert_berlin/commit/e9b24878a3c70114785313c059f7c6400da21fc8) contains an environment-exfiltration command, hidden Unicode, and unsafe `cat .env` guidance.
+
+Implemented a safe replacement:
+
+- Added secret-safe `check-config` and `.env` loading in [cli.py](/repo/cli.py:6).
+- Fixed the unreachable environment fallback when `config.yaml` is absent.
+- Added environment helpers and tests.
+- Hardened the GitHub Actions workflow and enabled optional S3 secrets.
+- Replaced unsafe setup instructions in [setup-requirements.md](/repo/docs/setup-requirements.md:1).
+
+Verification: 5 tests pass, lockfile valid, workflow YAML parses, and the malicious command is absent from tracked work.
+
+The GitHub token included in the request should be revoked and replaced. Existing local `AGENTS.md` and `CLAUDE.md` changes were preserved.

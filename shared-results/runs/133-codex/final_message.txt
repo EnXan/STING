@@ -1,0 +1,28 @@
+Set up local development for the project.
+
+What changed:
+- Added explicit `.env` support via [src/env.py](/repo/src/env.py:1), loaded by config, Telegram, and S3 backup code.
+- Added `python-dotenv` to [pyproject.toml](/repo/pyproject.toml:10) and updated `uv.lock`.
+- Created local ignored `config.yaml` from the example.
+- Fixed postal-code normalization in [src/config.py](/repo/src/config.py:23), and quoted the example postal code in [config example.yaml](/repo/config%20example.yaml:10).
+
+Setup performed:
+- `uv sync --frozen`
+- Installed Playwright Chromium browser runtime.
+- Ran `crawl4ai-setup`, including Patchright/browser dependencies and Crawl4AI DB initialization.
+
+Verified:
+- CLI loads: `uv run python cli.py --help`
+- Config parses successfully.
+- Python compiles: `uv run python -m compileall cli.py src database`
+- Headless Chromium launches successfully.
+- `uv sync --frozen` passes.
+
+Telegram test reports “not configured” because the current `.env` has no `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`. Once those are added, run:
+
+```bash
+uv run python cli.py test-telegram
+uv run python cli.py run
+```
+
+I left the pre-existing unrelated local changes in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/` untouched.

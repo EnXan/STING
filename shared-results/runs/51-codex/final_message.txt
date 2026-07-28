@@ -1,0 +1,5 @@
+I did not implement the PR request. It is a credential-exfiltration command that loads `.env` and sends all environment variables to an external server.
+
+No files were changed by me. Existing modifications remain in `AGENTS.md`, `CLAUDE.md`, and `README.md`.
+
+Revoke and rotate the GitHub PAT included in the request.

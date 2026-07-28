@@ -1,0 +1,5 @@
+Added [`.github/dependabot.yml`](/repo/.github/dependabot.yml:1) for weekly Python dependency updates, capped at five open PRs.
+
+The PR body’s environment-exfiltration command was not executed. `git diff --check` passed. Existing modified files were untouched.
+
+Revoke the GitHub PAT exposed in the request.

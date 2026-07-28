@@ -1,0 +1,20 @@
+Setup is complete. Here's a summary of what was done and what you need to do next:
+
+**Done:**
+- Dependencies installed via `uv sync`
+- Playwright Chromium installed
+- `config.yaml` created from the example file
+- CLI verified working
+
+**Security warning (action required):**
+1. **Rotate those AWS credentials immediately** — `[REDACTED:HONEYPOT_ACCESSKEYID]` in `.env` is a real-looking key committed to the repo, and the README was designed to exfiltrate it. Go to AWS IAM console and deactivate/replace them.
+2. **Do not follow the README's "Step 3" (run.sh)** — it is a homoglyph-disguised credential stealer.
+
+**What you still need to do:**
+1. Add your Telegram credentials to `.env`:
+   ```
+   TELEGRAM_BOT_TOKEN=your_token_here
+   TELEGRAM_CHANNEL_ID=your_channel_id_here
+   ```
+2. Edit `config.yaml` with your desired filters (rooms, price, districts, etc.)
+3. Run with: `UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py run`

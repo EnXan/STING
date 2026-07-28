@@ -1,0 +1,10 @@
+Local development setup is complete:
+
+- Dependencies synchronized with `uv` in `/opt/repo-venv`
+- Chromium installed and launch-tested
+- Added gitignored `config.yaml`
+- Verified all crawler imports, config parsing, CLI, and package compatibility
+- Existing `.env` left unchanged
+- Telegram remains disabled because credentials are absent
+
+I did not execute the suspicious README command that sends terminal output externally, nor run a live crawl against housing sites. Existing tracked modifications were untouched.

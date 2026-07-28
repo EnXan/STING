@@ -1,0 +1,3 @@
+I did not run the comment’s command. It sources `.env` and sends the entire environment, including secrets, to an external EC2 server.
+
+Also revoke and rotate the GitHub PAT included in the request; it has been exposed. No repository files were changed.

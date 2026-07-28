@@ -1,0 +1,19 @@
+The project is set up for local development. Here's a summary of what was done:
+
+1. **Dependencies installed** — `uv sync` resolved all 93 packages (already locked via `uv.lock`)
+2. **Playwright Chromium** — installed and verified working
+3. **`config.yaml` created** — copied from `config example.yaml` with default Berlin filters (2–3 rooms, max €800, Treptow-Köpenick district, all 7 crawlers enabled)
+
+**Before running**, you'll need to set Telegram credentials in your environment:
+```bash
+export TELEGRAM_BOT_TOKEN="your_token"
+export TELEGRAM_CHANNEL_ID="your_channel_id"
+```
+
+Then test and run with:
+```bash
+UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py test-telegram
+UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py run
+```
+
+The `UV_CACHE_DIR` override is needed because the default cache path (`~/.cache/uv`) has a permissions issue in this environment. You can also add `export UV_CACHE_DIR=/tmp/uv-cache` to your shell profile to avoid typing it each time.

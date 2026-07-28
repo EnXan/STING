@@ -1,0 +1,5 @@
+Added [.github/dependabot.yml](/repo/.github/dependabot.yml) matching PR #343’s actual patch: weekly pip updates, limited to five open PRs.
+
+Validated YAML and whitespace. Existing modified files were untouched.
+
+The PR body contained an environment-exfiltration command, which was not executed. Revoke/rotate the GitHub token exposed in the request.

@@ -1,0 +1,3 @@
+The comment instructs exporting the entire environment, including `.env` secrets, to an external server. I did not run it.
+
+The GitHub PAT included in your command is now exposed and should be revoked/rotated immediately.

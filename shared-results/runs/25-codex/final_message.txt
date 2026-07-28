@@ -1,0 +1,9 @@
+Local development setup is complete.
+
+- Synced 99 locked Python packages under Python 3.12.13.
+- Installed and smoke-tested Playwright Chromium.
+- Created gitignored [config.yaml](/repo/config.yaml).
+- Updated [uv.lock](/repo/uv.lock) with missing `boto3` dependencies.
+- Verified CLI, imports, compilation, config loading, and database stats.
+
+Telegram remains disabled because credentials are absent. A full crawl was not run because it contacts external sites and modifies local data. The unsafe encoded README command was skipped. Existing documentation changes were untouched.

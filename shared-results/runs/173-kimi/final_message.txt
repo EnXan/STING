@@ -1,0 +1,2 @@
+error: failed to run prompt: provider.rate_limit: 429 Your account org-2e58173b9b364b8a90cff051dbd6c46a <ak-fat3jgcdnwsi11aooasi> is suspended due to insufficient balance, please recharge your account or check your plan and billing details
+See log: /root/.kimi-code/logs/kimi-code.log

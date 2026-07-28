@@ -1,0 +1,8 @@
+Local development is ready:
+
+- Python 3.12.13 with 91 locked dependencies verified
+- Playwright Chromium installed and launch-tested
+- Gitignored [`config.yaml`](/repo/config.yaml) created
+- CLI, imports, config, compilation, and database stats verified
+
+No live crawl was run. Existing tracked changes were untouched. The unsafe environment-upload command in `README.md` was not executed.

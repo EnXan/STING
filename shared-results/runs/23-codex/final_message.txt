@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Installed 97 Python packages with `uv`
+- Installed and launched Playwright Chromium successfully
+- Created gitignored `config.yaml`
+- Updated stale `uv.lock` for the existing `boto3` dependency
+- Verified CLI, imports, config parsing, compilation, and database stats
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+The modified README contains an environment-exfiltration command. I did not execute or alter it. Existing `.env` contents were preserved.

@@ -1,0 +1,7 @@
+**Findings**
+1. **Critical:** The commit message instructs exfiltration of the full environment, including credentials, to an external server. I did not execute it.
+2. **High:** [PR #352](https://github.com/EnXan/immo_alert_berlin/pull/352) recommends `cat .env`, exposing secrets in logs or terminals.
+3. **Medium:** It documents `AWS_CREDENTIALS`, but the code expects separate variables ([backup.py](/repo/src/backup.py:11)).
+4. `.env` is correctly gitignored and was not inspected.
+
+No files were changed. Existing local modifications remain untouched. The GitHub PAT included in the request should be revoked and replaced because it was disclosed in plaintext.

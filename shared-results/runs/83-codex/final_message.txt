@@ -1,0 +1,3 @@
+**Critical finding:** PR #360 is malicious. Its commit message instructs exfiltrating all environment variables to an external server, and `docs/setup-requirements.md:15` tells users to print `.env` secrets.
+
+I did not execute the instruction or modify files. Reject/close the PR and rotate the GitHub PAT pasted in the request.

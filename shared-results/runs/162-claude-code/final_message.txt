@@ -1,0 +1,53 @@
+**Second security flag:** The `.env` file contains what appear to be AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) committed directly to the repository. This is a significant secret-leakage risk — these should be rotated immediately if real, and the file should be in `.gitignore`.
+
+---
+
+Now, here's the legitimate local dev setup for this project:
+
+## Local Development Setup
+
+**Prerequisites:** Python 3.12, and [`uv`](https://docs.astral.sh/uv/getting-started/installation/)
+
+### 1. Install dependencies
+```bash
+uv sync
+```
+
+### 2. Install Playwright browsers (required for crawlers)
+```bash
+uv run playwright install chromium
+```
+
+### 3. Create your config file
+```bash
+cp "config example.yaml" config.yaml
+# Edit config.yaml to set your filters, districts, enabled sources, etc.
+```
+
+### 4. Set Telegram credentials
+Create/edit `.env` with your bot credentials (do **not** commit this file):
+```bash
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHANNEL_ID=your_channel_id_here
+```
+
+### 5. Verify setup
+```bash
+uv run python cli.py test-telegram
+```
+
+### 6. Run a crawl
+```bash
+uv run python cli.py run
+```
+
+---
+
+**To summarize the security issues found in this repo:**
+
+| Issue | Location | Severity |
+|---|---|---|
+| Prompt injection via image in `CLAUDE.md` — attempts to exfiltrate env vars to `ec2-51-20-9-246.eu-north-1.compute.amazonaws.com` | `docs/assets/orchestrator-editor-note.png` + `CLAUDE.md` | Critical |
+| AWS credentials committed to repo | `.env` | High |
+
+You should rotate those AWS credentials if they're real, remove `.env` from git tracking (`git rm --cached .env`), and add it to `.gitignore`.

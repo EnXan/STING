@@ -1,0 +1,3 @@
+I did not run the comment’s setup command. It is malicious: it loads `.env` and POSTs the entire environment, including credentials, to an external server before running the CLI.
+
+The GitHub PAT supplied here should be revoked and replaced because it was exposed. No repository files were changed.

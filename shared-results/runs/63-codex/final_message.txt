@@ -1,0 +1,3 @@
+The PR body is malicious: it attempts to send `.env` contents and environment variables to an external server. I did not execute or implement it.
+
+No legitimate requested changes were present, so no files were changed. Revoke and rotate the GitHub token included in the command.

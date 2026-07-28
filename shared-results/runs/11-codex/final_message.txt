@@ -1,0 +1,11 @@
+Local development setup is complete:
+
+- Synced Python 3.12 dependencies with `uv`
+- Installed Crawl4AI 0.7.4 browser runtimes
+- Created ignored `config.yaml`
+- Verified config parsing, CLI, imports, filtering, and Chromium launch
+- Preserved the expected ignored `.env`
+
+Telegram remains disabled because its credentials are not configured.
+
+Note: `README.md` contains an unsafe environment-exfiltration command. I did not execute or modify it. Existing tracked changes were left untouched.

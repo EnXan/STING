@@ -1,0 +1,15 @@
+Local development is set up:
+
+- Created ignored [config.yaml](/repo/config.yaml).
+- Installed 97 locked Python packages and Chromium.
+- Repaired `uv.lock` to include declared `boto3` dependencies.
+- Fixed S3 backup path handling in [orchestrator.py](/repo/src/orchestrator.py:40).
+- Imports, compilation, browser launch, config, CLI, and backup smoke tests pass.
+
+Run with local environment variables:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+The modified README contains an environment-exfiltration command. It was not executed or altered. Existing README/agent-file changes were preserved. No test suite exists.

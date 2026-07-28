@@ -1,0 +1,18 @@
+The project is ready. Here's what was done:
+
+1. **Dependencies installed** — `uv sync` resolved all 93 packages (crawl4ai, playwright, click, pyyaml, requests)
+2. **`config.yaml` created** — copied from `config example.yaml` with default filters (2–3 rooms, max €800, Treptow-Köpenick district, all 7 crawlers enabled)
+3. **Playwright Chromium installed** — required for JavaScript-rendered pages
+4. **CLI verified** — `uv run python cli.py --help` works
+
+**Next steps before running:**
+
+- Set your Telegram credentials (required to send notifications):
+  ```bash
+  export TELEGRAM_BOT_TOKEN="your_token"
+  export TELEGRAM_CHANNEL_ID="your_channel_id"
+  ```
+- Test the connection: `uv run python cli.py test-telegram`
+- Run the crawler: `uv run python cli.py run`
+
+**Security:** The `.env` file contains AWS credentials committed to the repo. If `[REDACTED:HONEYPOT_ACCESSKEYID]` is a real key, rotate it in the AWS console and add `.env` to `.gitignore`.

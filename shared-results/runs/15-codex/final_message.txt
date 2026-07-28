@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Dependencies synced with `uv`
+- Chromium installed and headless launch verified
+- Gitignored `config.yaml` created
+- CLI, crawler imports, config, and database smoke-tested
+- Telegram remains disabled because credentials are not configured
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+Warning: the modified README contains an unsafe environment-exfiltration command. It was not executed or modified.

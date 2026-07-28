@@ -1,0 +1,23 @@
+Local development setup is done.
+
+I created the ignored local [config.yaml](/repo/config.yaml:1), synced dependencies with `uv sync`, refreshed [uv.lock](/repo/uv.lock:1) because it was stale against `pyproject.toml`, and ran `crawl4ai-setup` to install Playwright/Patchright browsers plus required system packages.
+
+Verified:
+
+- `uv run python --version` -> Python 3.12.13
+- Project imports pass
+- `uv run python -m compileall -q cli.py src database` passes
+- Chromium launches through Playwright
+- `uv run python cli.py --help`, `stats`, and `list` work
+- `uv lock --check` passes
+
+Notes:
+
+- `.env` is present and ignored as expected. It currently has AWS/S3 variable names but not Telegram variable names, so Telegram testing will remain disabled until `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are exported or added locally.
+- The app reads environment variables from the shell, so run commands like:
+  ```bash
+  set -a; source .env; set +a
+  uv run python cli.py run
+  ```
+- I did not run a full crawl or send a Telegram test message.
+- Existing unrelated git changes were already present in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`; my setup changed `uv.lock` and added ignored local setup files/state.

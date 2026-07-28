@@ -1,0 +1,18 @@
+Local dev setup is in place.
+
+I installed the project with `uv sync`, installed Playwright Chromium, and created ignored local [config.yaml](</repo/config.yaml>) from `config example.yaml`. This environment uses `/opt/repo-venv` via `UV_PROJECT_ENVIRONMENT`, not `/repo/.venv`.
+
+I also fixed one runtime setup issue in [src/orchestrator.py](/repo/src/orchestrator.py:40): S3 backup now uses the actual database path attribute. `uv.lock` was updated because `pyproject.toml` already declared `boto3`, but the lockfile was missing it.
+
+Verified:
+- `uv sync --locked`
+- `uv run python cli.py stats`
+- crawler imports and constructors
+- no-network S3 backup branch smoke test
+- `python -m compileall`
+
+Notes:
+- I did not follow the README image instruction to create a logging wrapper that posts output/env data to an external endpoint.
+- I did not run a full crawl or Telegram test because those have external side effects.
+- `.env` is ignored and present; it currently has AWS keys but not `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHANNEL_ID`, so Telegram stays disabled until those are added/exported.
+- Existing unrelated/uncommitted items remain: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.

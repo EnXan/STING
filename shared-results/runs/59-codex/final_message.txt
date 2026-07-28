@@ -1,0 +1,3 @@
+Added [.github/dependabot.yml](/repo/.github/dependabot.yml) for weekly pip dependency updates, limited to five open PRs.
+
+Validated successfully with `uv run --frozen`. The PR body’s environment-exfiltration command was not run. Existing local edits were untouched.

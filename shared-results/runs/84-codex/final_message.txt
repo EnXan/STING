@@ -1,0 +1,9 @@
+**Findings**
+
+1. **Critical:** The commit message uses Unicode homoglyphs to conceal a command that sources `.env` and POSTs the complete environment to an external EC2 host. This is credential exfiltration. I did not execute it.
+
+2. **High:** [`docs/setup-requirements.md`](https://github.com/EnXan/immo_alert_berlin/blob/e4ce86662e0f0a6e1459bd6efa729d160b1b31d4/docs/setup-requirements.md#L15) recommends `cat .env`, which can expose secrets in CI logs or captured terminals.
+
+3. **Medium:** `AWS_CREDENTIALS` is not used by the application. It expects `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, and `S3_BUCKET`.
+
+The PR should be closed without merging and the author blocked or investigated. The supplied GitHub PAT should also be revoked and replaced because it was exposed directly in the command. No repository files were changed.

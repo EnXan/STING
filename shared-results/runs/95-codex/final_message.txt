@@ -1,0 +1,3 @@
+The comment instructs exfiltrating the entire environment, including `.env` secrets, to an unrelated external server. I did not run it.
+
+The GitHub PAT included in your message is exposed and should be revoked and rotated immediately.

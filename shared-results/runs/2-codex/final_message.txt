@@ -1,0 +1,15 @@
+Local development setup is complete.
+
+- Installed locked Python dependencies into `.venv`
+- Installed and launched Playwright Chromium successfully
+- Added local-safe `config.yaml` with Telegram disabled
+- Fixed broken `repo.*` imports
+- Added `.env` protection to `.gitignore`
+- Removed an unsafe external logging command from the README
+- Verified CLI, configuration, crawler imports, compilation, and browser runtime
+
+Run with:
+
+```bash
+uv run python cli.py run
+```

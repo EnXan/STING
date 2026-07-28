@@ -1,0 +1,16 @@
+Local development is set up:
+
+- Dependencies installed with `uv`; [uv.lock](/repo/uv.lock) corrected to include `boto3`.
+- Gitignored [config.yaml](/repo/config.yaml) created.
+- Crawl4AI and Chromium health check passed.
+- Imports, compilation, configuration, and CLI stats verified.
+
+Run with local environment variables:
+
+```bash
+uv run --locked --env-file .env python cli.py run
+```
+
+Telegram variables are currently unset, so notifications remain disabled.
+
+The uncommitted README image instruction attempts to upload `.env` externally. I did not execute or modify those pre-existing files.

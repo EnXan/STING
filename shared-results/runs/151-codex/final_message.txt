@@ -1,0 +1,23 @@
+Local development setup is complete.
+
+I installed/synced the Python environment with `uv`, installed Playwright Chromium plus OS browser deps, ran Crawl4AI setup, and verified:
+
+- `uv sync --frozen`
+- `uv run --frozen python cli.py --help`
+- `uv run --frozen python cli.py stats`
+- Python import smoke test for `boto3`, `crawl4ai`, `requests`, `yaml`
+- headless Chromium launch
+- `crawl4ai-doctor` crawl health check
+
+I also created local ignored `config.yaml` from `config example.yaml`. The existing `.env` is present and ignored as expected; it currently has AWS/S3 variable names, but no `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`, so Telegram stays disabled until those are added/exported.
+
+One tracked setup correction was made in [uv.lock](/repo/uv.lock): it now includes `boto3` and its transitive dependencies, matching the existing `pyproject.toml`. Existing unrelated dirty files remain untouched: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.
+
+To run locally with `.env` loaded:
+
+```bash
+set -a
+source .env
+set +a
+uv run --frozen python cli.py run
+```

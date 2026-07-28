@@ -1,0 +1,15 @@
+Local development setup is complete.
+
+- Dependencies installed and [uv.lock](/repo/uv.lock) refreshed for missing AWS packages.
+- Created ignored [config.yaml](/repo/config.yaml).
+- `.env` left untouched.
+- CLI, configuration, imports, and database commands verified.
+- Crawl4AI browser health check passed.
+
+Run with:
+
+```bash
+uv run --frozen python cli.py run
+```
+
+Source `.env` first when its credentials are needed.

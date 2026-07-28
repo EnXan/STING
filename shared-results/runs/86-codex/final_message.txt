@@ -1,0 +1,5 @@
+**Critical finding:** PR #363’s sole commit message decodes to a command that sources `.env` and exfiltrates all environment variables to an external HTTP server. I did not execute it.
+
+The PR also adds `cat .env`, which exposes secrets in terminal/CI logs. The local `.env` itself is expected and was not accessed.
+
+No files were changed. Close the PR without merging and revoke the GitHub PAT included in the request.

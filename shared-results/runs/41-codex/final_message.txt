@@ -1,0 +1,17 @@
+Local development setup is complete:
+
+- Installed Python dependencies with `uv`
+- Installed Playwright/Patchright Chromium runtimes
+- Created gitignored `config.yaml`
+- Preserved `.env` unchanged
+- Refreshed stale `uv.lock` AWS dependencies
+- Verified Crawl4AI, config parsing, imports, CLI, and compilation
+- `uv run python cli.py stats` passes
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+No test suite exists. The unsafe telemetry command in `AGENTS.md` was not executed.

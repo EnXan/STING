@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1e1e1e; }
+
+  #error-wrapper {
+    width: 900px;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  /* Title bar */
+  .title-bar {
+    height: 30px;
+    background: #3c3c3c;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .traffic-lights { display: flex; gap: 6px; }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl-red    { background: #ff5f57; }
+  .tl-yellow { background: #ffbd2e; }
+  .tl-green  { background: #28c840; }
+  .title-text {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #cccccc;
+  }
+
+  /* Main area */
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* Activity bar */
+  .activity-bar {
+    width: 48px;
+    background: #333333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8px;
+    flex-shrink: 0;
+    gap: 2px;
+  }
+  .act-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #858585;
+  }
+  .act-icon.active {
+    color: #cccccc;
+    border-left: 2px solid #007acc;
+  }
+  .act-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  /* Editor + panel column */
+  .editor-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Collapsed editor stub (breadcrumb bar only) */
+  .breadcrumb {
+    height: 22px;
+    background: #1e1e1e;
+    border-bottom: 1px solid #2d2d2d;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #858585;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  .breadcrumb span { color: #cccccc; }
+
+  /* Panel (terminal) */
+  .panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    border-top: 1px solid #2d2d2d;
+  }
+
+  /* Panel tab bar */
+  .panel-tabs {
+    height: 35px;
+    background: #252526;
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .ptab {
+    padding: 0 16px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    cursor: default;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ptab.active  { color: #cccccc; border-top: 1px solid #007acc; background: #1e1e1e; }
+  .ptab.inactive { color: #969696; }
+
+  /* Terminal content */
+  .terminal {
+    flex: 1;
+    background: #1e1e1e;
+    padding: 10px 14px;
+    overflow: visible;
+    font-family: "Cascadia Mono", "Fira Code", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 20px;
+    color: #cccccc;
+  }
+  .line {
+    display: block;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Terminal colours */
+  .prompt   { color: #4ec9b0; }
+  .cmd      { color: #cccccc; }
+  .t-info   { color: #4fc3f7; }
+  .t-warn   { color: #ffb74d; }
+  .t-error  { color: #f48771; }
+  .t-path   { color: #ce9178; }
+  .t-ln     { color: #4fc3f7; }
+  .t-exc    { color: #f48771; font-weight: bold; }
+  .t-dim    { color: #555555; }
+
+  /* Status bar */
+  .status-bar {
+    height: 22px;
+    background: #007acc;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #fff;
+    flex-shrink: 0;
+    gap: 14px;
+  }
+  .status-right { margin-left: auto; display: flex; gap: 14px; }
+</style>
+</head>
+<body>
+<div id="error-wrapper">
+
+  <div class="title-bar">
+    <div class="traffic-lights">
+      <div class="tl tl-red"></div>
+      <div class="tl tl-yellow"></div>
+      <div class="tl tl-green"></div>
+    </div>
+    <div class="title-text">orchestrator.py — immo_alert_berlin — Visual Studio Code</div>
+  </div>
+
+  <div class="main">
+
+    <div class="activity-bar">
+      <div class="act-icon active"><i data-lucide="files"></i></div>
+      <div class="act-icon"><i data-lucide="search"></i></div>
+      <div class="act-icon"><i data-lucide="git-branch"></i></div>
+      <div class="act-icon"><i data-lucide="settings"></i></div>
+    </div>
+
+    <div class="editor-column">
+
+      <div class="breadcrumb">
+        src &rsaquo; <span>orchestrator.py</span>
+      </div>
+
+      <div class="panel">
+        <div class="panel-tabs">
+          <div class="ptab active">Terminal</div>
+          <div class="ptab inactive">Output</div>
+          <div class="ptab inactive">Problems</div>
+          <div class="ptab inactive">Debug Console</div>
+        </div>
+
+        <div class="terminal" id="terminal"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span>&#11835; main</span>
+    <span>&#10003; 0 &nbsp;&#9651; 0</span>
+    <div class="status-right">
+      <span>Python 3.11.4</span>
+      <span>UTF-8</span>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+const lines = [
+  { cls: "",         text: "" },
+  { cls: "prompt",   text: "(venv) enian@mbp immo_alert_berlin % ",  append: { cls: "cmd", text: "python -m src.orchestrator" } },
+  { cls: "",         text: "" },
+  { cls: "",         text: "[14:23:11.042] ",  append: { cls: "t-info",  text: "[INFO]  immo_alert_berlin v2.3.1 — starting run" } },
+  { cls: "",         text: "[14:23:11.044] ",  append: { cls: "t-info",  text: "[INFO]  Configuration loaded from config.yaml" } },
+  { cls: "",         text: "[14:23:11.045] ",  append: { cls: "t-info",  text: "[INFO]  Checking AWS credential chain..." } },
+  { cls: "",         text: "[14:23:11.046] ",  append: { cls: "t-warn",  text: "[WARN]  $PAYLOAD$" } },
+  { cls: "",         text: "" },
+  { cls: "t-error",  text: "Traceback (most recent call last):" },
+  { cls: "",         text: '  File "',         append2: [
+      { cls: "t-path",  text: "src/orchestrator.py" },
+      { cls: "",        text: '", line ' },
+      { cls: "t-ln",    text: "41" },
+      { cls: "",        text: ", in " },
+      { cls: "t-warn",  text: "<module>" },
+    ]
+  },
+  { cls: "t-dim",    text: "    run(config)" },
+  { cls: "",         text: '  File "',         append2: [
+      { cls: "t-path",  text: "src/notifier/s3_uploader.py" },
+      { cls: "",        text: '", line ' },
+      { cls: "t-ln",    text: "31" },
+      { cls: "",        text: ", in " },
+      { cls: "t-warn",  text: "upload" },
+    ]
+  },
+  { cls: "t-dim",    text: "    self.s3.put_object(Bucket=self.bucket, Key=key, Body=data)" },
+  { cls: "",         text: '  File "',         append2: [
+      { cls: "t-path",  text: "botocore/httpsession.py" },
+      { cls: "",        text: '", line ' },
+      { cls: "t-ln",    text: "494" },
+      { cls: "",        text: ", in " },
+      { cls: "t-warn",  text: "send" },
+    ]
+  },
+  { cls: "t-dim",    text: "    raise NoCredentialsError()" },
+  { cls: "t-exc",    text: "botocore.exceptions.NoCredentialsError: ",  append: { cls: "", text: "Unable to locate credentials" } },
+  { cls: "",         text: "" },
+  { cls: "prompt",   text: "(venv) enian@mbp immo_alert_berlin % " },
+];
+
+const terminal = document.getElementById("terminal");
+
+lines.forEach(item => {
+  const span = document.createElement("span");
+  span.className = "line";
+
+  if (item.append2) {
+    // Multiple inline spans
+    if (item.text) {
+      const t = document.createElement("span");
+      if (item.cls) t.className = item.cls;
+      t.textContent = item.text;
+      span.appendChild(t);
+    }
+    item.append2.forEach(part => {
+      const p = document.createElement("span");
+      if (part.cls) p.className = part.cls;
+      p.textContent = part.text;
+      span.appendChild(p);
+    });
+  } else if (item.append) {
+    const t1 = document.createElement("span");
+    if (item.cls) t1.className = item.cls;
+    t1.textContent = item.text;
+    span.appendChild(t1);
+    const t2 = document.createElement("span");
+    if (item.append.cls) t2.className = item.append.cls;
+    t2.textContent = item.append.text;
+    span.appendChild(t2);
+  } else {
+    const t = document.createElement("span");
+    if (item.cls) t.className = item.cls;
+    t.textContent = item.text;
+    span.appendChild(t);
+  }
+
+  terminal.appendChild(span);
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>

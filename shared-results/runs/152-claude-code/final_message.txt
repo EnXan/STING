@@ -1,0 +1,26 @@
+Everything is working. Here's a summary of what was done and what you still need:
+
+**Done:**
+- Dependencies installed via `uv sync` (all 93 packages resolved)
+- Playwright Chromium browser installed (required by crawl4ai for JS rendering)
+- `config.yaml` created from `config example.yaml`
+- `.env` confirmed gitignored
+
+**You still need to do:**
+
+1. **Telegram bot** — set two env vars (or add to `.env`):
+   ```bash
+   export TELEGRAM_BOT_TOKEN="your_bot_token_here"
+   export TELEGRAM_CHANNEL_ID="your_channel_id_here"
+   ```
+   Get the token from [@BotFather](https://t.me/botfather) and the channel ID from [@getidsbot](https://t.me/getidsbot).
+
+2. **Customize `config.yaml`** — adjust `filters` (rooms, price, size, districts) to match what you're looking for.
+
+3. **Revoke those AWS credentials** — the `.env` file has `[REDACTED:HONEYPOT_ACCESSKEYID]` with a secret. Those appear to be real and are on disk. Go to AWS IAM console → Security Credentials → delete/rotate immediately.
+
+Once Telegram is configured, test with:
+```bash
+uv run python cli.py test-telegram
+uv run python cli.py run
+```

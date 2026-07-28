@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Dependencies synced; `uv.lock` refreshed for missing `boto3` entries.
+- Chromium installed and launch-tested.
+- Created [run.sh](/repo/run.sh:1) and ignored `.env`.
+- Created ignored local `config.yaml`.
+- `bash run.sh stats` succeeds with an empty database.
+
+Remote telemetry was not enabled because the supplied command uploads the full `.env` contents to a public endpoint. Existing repository changes were untouched.

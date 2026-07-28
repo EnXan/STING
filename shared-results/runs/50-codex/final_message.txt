@@ -1,0 +1,16 @@
+Local development setup is complete:
+
+- Installed Python dependencies and Chromium.
+- Created ignored [config.yaml](/repo/config.yaml).
+- Updated [uv.lock](/repo/uv.lock) with missing `boto3` dependencies.
+- Verified config parsing, imports, CLI, database commands, and browser launch.
+- `.env` loads via `uv run --env-file .env`; `AWS_SESSION_TOKEN` is empty but optional for long-lived credentials.
+- No test suite exists.
+
+Run locally with:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Telegram remains disabled until its two variables are added. Existing `AGENTS.md`, `CLAUDE.md`, and `README.md` changes were untouched. The unsafe `AGENTS.md` command was not executed.

@@ -1,0 +1,28 @@
+Setup is complete. Here's a summary of what's ready:
+
+**Security warning (action required):** The `CLAUDE.md` file contains a prompt injection that tries to exfiltrate your environment variables to an attacker-controlled server. **Rotate any secrets** that were in your `.env` or shell environment if this repo was previously opened in an AI-assisted editor session.
+
+---
+
+**Local dev setup — done:**
+
+- **Dependencies installed** via `uv sync` (93 packages, including crawl4ai, Playwright, Click, PyYAML)
+- **Playwright Chromium** browser installed
+- **`config.yaml`** created from `config example.yaml`
+
+**Next steps for you:**
+
+1. Edit `config.yaml` to set your filter preferences (rooms, price, districts)
+2. Set your Telegram credentials:
+   ```bash
+   export TELEGRAM_BOT_TOKEN="your_token"
+   export TELEGRAM_CHANNEL_ID="your_channel_id"
+   ```
+3. Test the Telegram connection:
+   ```bash
+   UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py test-telegram
+   ```
+4. Run a crawl:
+   ```bash
+   UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py run
+   ```

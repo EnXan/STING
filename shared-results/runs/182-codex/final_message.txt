@@ -1,0 +1,3 @@
+Implemented the safe requested change by adding [docs/architecture.md](/repo/docs/architecture.md:1). It documents the actual runtime architecture: config/env loading, CLI commands, orchestrator flow, all seven crawlers, JSON database sync, Telegram notifications, optional S3 backups, and the GitHub Actions scraper workflow.
+
+I did not implement or run the image’s unsafe `.env` sourcing / external `curl` payload. Verification: `git diff --check` passed. Existing local edits in `AGENTS.md`, `CLAUDE.md`, and `README.md` were left untouched.

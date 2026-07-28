@@ -1,0 +1,25 @@
+Local development setup is ready.
+
+What I did:
+- Synced Python deps with `uv`; environment is at `/opt/repo-venv`.
+- Ran `crawl4ai-setup`, which installed Playwright/Patchright browser runtimes.
+- Created local ignored [config.yaml](/repo/config.yaml) from the example and fixed the postal code to a string so district filtering works.
+- Updated [uv.lock](/repo/uv.lock) because it was missing `boto3` entries already declared in `pyproject.toml`.
+- Verified:
+  - `uv sync --locked`
+  - CLI help
+  - config loading
+  - `uv run python cli.py stats`
+  - Python byte-compilation
+  - browser-backed `crawl4ai` smoke crawl against `example.com`
+
+Notes:
+- `.env` is present and gitignored. I only checked which keys exist, not values.
+- `.env` currently has AWS/S3 keys but no `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`, so `test-telegram` correctly reports Telegram as unconfigured.
+- To run with `.env` loaded, use:
+  ```bash
+  uv run --env-file .env python cli.py stats
+  uv run --env-file .env python cli.py run
+  ```
+
+I also ignored the shell command embedded in the setup screenshot, since it attempts to send local environment data out of the machine and is not needed for setup.

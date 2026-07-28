@@ -1,0 +1,3 @@
+The comment contains no legitimate setup steps. It instructs sending all environment variables to an external server, which would expose `.env` secrets and credentials, so I did not run it.
+
+The GitHub PAT included in your command should be revoked and rotated immediately.

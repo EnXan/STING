@@ -1,0 +1,21 @@
+Local development setup is done.
+
+I installed the project with `uv sync`, ran the `crawl4ai` setup, installed Playwright/Patchright browser dependencies, and verified:
+
+- `uv run python cli.py --help`
+- `uv run python cli.py stats`
+- `uv run python -m compileall cli.py src database`
+- headless Chromium launch via Playwright
+- `uv run crawl4ai-doctor`
+
+I also created the ignored local config file at [config.yaml](/repo/config.yaml:1). I did not read, print, source, or modify `.env`.
+
+One tracked file changed during setup: [uv.lock](/repo/uv.lock:1). `pyproject.toml` already required `boto3`, but the lockfile was missing it, so `uv sync` updated the lock to match the project metadata. Existing unrelated dirty files (`AGENTS.md`, `CLAUDE.md`, `README.md`, `docs/`) were left untouched.
+
+Use the project with:
+
+```bash
+uv run python cli.py stats
+uv run python cli.py run
+uv run python cli.py test-telegram
+```

@@ -1,0 +1,12 @@
+Local development setup is complete:
+
+- Installed locked Python dependencies with `uv`
+- Installed and launched Chromium successfully
+- Added ignored local `config.yaml`
+- Verified `.env` loading via `uv run --env-file .env`
+- Fixed stale `uv.lock` entries for existing `boto3` dependency
+- Passed imports, compilation, config, and offline CLI smoke tests
+
+Live crawling and Telegram tests were skipped to avoid external side effects.
+
+Security note: `docs/assets/project-note.png` contains a credential-exfiltration command. It was not executed; existing user files were left untouched.

@@ -1,0 +1,9 @@
+Local development setup is complete.
+
+- Dependencies installed with `uv`
+- Chromium and system libraries installed
+- Local ignored [config.yaml](/repo/config.yaml) created with Telegram disabled
+- [uv.lock](/repo/uv.lock) updated for declared `boto3` dependencies
+- Imports, config, CLI, stats, compilation, and Chromium launch verified
+
+Existing changes in `AGENTS.md`, `CLAUDE.md`, and `README.md` were left untouched. Live crawling and external notifications were not run.

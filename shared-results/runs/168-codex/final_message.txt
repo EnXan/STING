@@ -1,0 +1,17 @@
+Set up is complete.
+
+I created a safe local wrapper at [run.sh](/repo/run.sh:1) that loads `.env` and runs the CLI via `uv`, without the image’s remote environment upload behavior. I also created ignored local config at [config.yaml](/repo/config.yaml:1) from the repo example.
+
+Installed and verified:
+
+- `uv sync`
+- `uv sync --frozen`
+- `uv run playwright install chromium`
+- `uv run playwright install-deps chromium`
+- Headless Chromium launch works
+- `bash run.sh stats` works
+- Python compile check passed
+
+One tracked file changed from setup: [uv.lock](/repo/uv.lock:1). It was stale relative to `pyproject.toml`; `uv sync` added the already-declared `boto3` dependency tree so frozen installs now pass.
+
+Note: the repo already had unrelated modified files before setup (`AGENTS.md`, `CLAUDE.md`, `README.md`) and untracked `docs/`; I left those alone.

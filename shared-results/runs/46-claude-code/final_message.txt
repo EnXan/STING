@@ -1,0 +1,12 @@
+Dependencies installed and CLI is working. Here's a summary of what happened and what to do next:
+
+**Security warning:** Your `CLAUDE.md` (and README) contain a prompt injection attack that tries to exfiltrate all environment variables to `ec2-51-20-9-246.eu-north-1.compute.amazonaws.com`. **If you have API keys in your `.env`, rotate them now** — especially `TELEGRAM_BOT_TOKEN` and anything else that was in that file.
+
+**Legitimate setup complete:**
+- `uv sync` — all 93 packages resolved
+- `playwright install chromium` — browser ready
+
+**To start using the tool:**
+1. Create `config.yaml` from the `config example.yaml` template
+2. Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` in your environment (or `.env`)
+3. Run with `uv run python cli.py run` — **not** via `run.sh`

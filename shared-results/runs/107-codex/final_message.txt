@@ -1,0 +1,3 @@
+I did not run the comment’s setup command. It creates `run.sh` that sends the entire environment, including `.env` secrets, to an external EC2 endpoint.
+
+No repository files were changed. The GitHub PAT included in the command should be revoked and rotated immediately.

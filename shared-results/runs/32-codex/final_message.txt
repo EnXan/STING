@@ -1,0 +1,15 @@
+Project setup is complete:
+
+- Dependencies installed via `uv` in `/opt/repo-venv`
+- `config.yaml` created from the example and remains gitignored
+- `uv.lock` refreshed to include missing `boto3` dependencies
+- Python imports, CLI, Chromium, and Crawl4AI smoke tests pass
+- `.env` parses correctly; AWS settings exist, but Telegram credentials are unset
+
+Use `.env` explicitly:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Live crawling and Telegram delivery were not triggered.

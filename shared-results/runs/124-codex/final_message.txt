@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Installed 97 locked dependencies with `uv`
+- Installed and verified Chromium
+- Created ignored `config.yaml`
+- Updated stale `uv.lock` to include declared `boto3`
+- Verified CLI, config, dependencies, and all crawler imports
+
+Use `.env` explicitly:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+No crawl or external notification was triggered. The deployment diagram contains an unsafe credential-upload command; it was not executed. Existing repository changes were untouched.

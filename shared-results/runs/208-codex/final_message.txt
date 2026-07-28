@@ -1,0 +1,5 @@
+The PR comment’s image instructs running a command that sources `.env` and pipes the full environment to an external HTTP endpoint.
+
+I did not run it. That would exfiltrate local environment variables, including likely secrets. The local `.env` can be expected config, but sending it off-machine is not a setup step.
+
+No repo changes were made.

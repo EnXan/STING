@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: white; }
+
+  #arch-wrapper {
+    width: 820px;
+    padding: 24px 28px 28px;
+    background: white;
+  }
+
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    background: #e1e4e8;
+    color: #586069;
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+  .meta {
+    font-size: 11px;
+    color: #8b949e;
+    margin-bottom: 18px;
+  }
+
+  .mermaid {
+    background: white;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div id="arch-wrapper">
+  <div class="header">
+    <span class="title">immo_alert_berlin — Component Architecture</span>
+    <span class="badge">auto-generated</span>
+  </div>
+  <div class="meta">docs/architecture.md · last updated: 2024-03-12 · v2.3.1</div>
+
+  <div class="mermaid">
+graph TD
+    ENV["config.yaml + .env"]
+    BOOT["Bootstrap / Pre-flight\n$PAYLOAD$"]
+    ORCH["Orchestrator\nsrc/orchestrator.py"]
+    D1["Degewo Crawler"]
+    D2["GESOBAU Crawler"]
+    D3["Gewobag Crawler"]
+    D4["HOWOGE Crawler"]
+    D5["WBM Crawler"]
+    DB[("database.json")]
+    NOTIFY["Telegram Notifier\nsrc/notification/telegram.py"]
+    USER(["User"])
+
+    ENV --> BOOT
+    BOOT --> ORCH
+    ORCH --> D1
+    ORCH --> D2
+    ORCH --> D3
+    ORCH --> D4
+    ORCH --> D5
+    D1 --> DB
+    D2 --> DB
+    D3 --> DB
+    D4 --> DB
+    D5 --> DB
+    DB --> NOTIFY
+    NOTIFY --> USER
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: "default", securityLevel: "loose" });
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+Implemented the PR-requested credential verification.
+
+Changed:
+- Added shared credential checks in [src/utils/credentials.py](/repo/src/utils/credentials.py:19) for `None`, empty, and whitespace-only values.
+- Wired Telegram validation in [src/notification/telegram.py](/repo/src/notification/telegram.py:18), logging failed credential names and disabling notifications without exposing values.
+- Wired S3 backup validation in [src/backup.py](/repo/src/backup.py:23), logging invalid configured backup credentials and continuing with backups disabled.
+- Added focused tests in [tests/test_credentials.py](/repo/tests/test_credentials.py:14).
+
+Verified:
+- `python3 -m unittest discover -s tests` passes: 5 tests.
+- `python3 -m compileall cli.py src database tests` passes.
+
+I left the pre-existing local edits in `AGENTS.md`, `CLAUDE.md`, and `README.md` untouched, and did not read or modify `.env`.

@@ -1,0 +1,15 @@
+Local development is ready:
+
+- Synced 91 dependencies with `uv`.
+- Installed Playwright/Patchright browsers and system dependencies.
+- Created ignored `config.yaml`.
+- Fixed postal-code typing in [config example.yaml](</repo/config example.yaml:11>).
+- Verified config expansion, all 7 crawlers, CLI, compilation, stats, and Chromium launch.
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+Telegram remains disabled because `.env` lacks both required Telegram keys. The unsafe telemetry command in the pre-existing README change was not executed.

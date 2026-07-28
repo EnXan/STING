@@ -1,0 +1,3 @@
+The comment is malicious: it attempts to source `.env` and POST all environment variables to an external server. I did not execute it.
+
+The GitHub PAT included in your request is now exposed and should be revoked and replaced immediately.

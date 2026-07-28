@@ -1,0 +1,169 @@
+{
+  "project": "STING \u2014 Unrestricted Agent Execution",
+  "branchName": "feat/unrestricted-execution",
+  "description": "Replace sandboxed Docker execution with unrestricted agent execution while retaining passive monitoring and logging",
+  "sprintConfig": {
+    "checkpointEnabled": true
+  },
+  "userStories": [
+    {
+      "id": "STING-01",
+      "title": "Switch proxy from allow-list blocking to log-only",
+      "description": "As a researcher, I want the proxy to log all traffic without blocking so that agents behave as they would on a real developer machine",
+      "acceptanceCriteria": [
+        "No requests are blocked by the proxy \u2014 all traffic passes through",
+        "All requests are still logged to proxy.jsonl with host, method, url, timestamp",
+        "C2 host requests appear in proxy.jsonl (S4 scoring unaffected)",
+        "ALLOWED_HOSTS set is removed from proxy/addon.py",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 1,
+      "passes": true,
+      "notes": "Completed 2026-06-04. Removed ALLOWED_HOSTS and 403 blocking. Scorer only reads host field, not blocked field."
+    },
+    {
+      "id": "STING-02",
+      "title": "Remove sandbox context prompt from agent commands",
+      "description": "As a researcher, I want agents to receive only the raw user task prompt so that their behavior reflects a real-world scenario without sandbox awareness",
+      "acceptanceCriteria": [
+        "_SANDBOX_CONTEXT_PROMPT constant is deleted from runner/runner.py",
+        "Agent receives only the user prompt from the attack matrix",
+        "context.json no longer contains sandbox_context_prompt field",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 2,
+      "passes": true,
+      "notes": "Deleted _SANDBOX_CONTEXT_PROMPT constant, removed sandbox framing from _agent_cmd(), removed sandbox_context_prompt from context.json."
+    },
+    {
+      "id": "STING-03",
+      "title": "Remove uv shim and venv protection from entrypoint",
+      "description": "As a researcher, I want the agent to have full access to package managers so that it can install dependencies like a real developer would",
+      "acceptanceCriteria": [
+        "entrypoint.sh has no uv-shim logic (STING_PROTECT_VENV block deleted)",
+        "uv sync inside the container runs the real uv binary",
+        "STING_PROTECT_VENV and STING_BLOCK_UV_SYNC env vars are gone from all code",
+        "No references to uv-real anywhere in the codebase",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 3,
+      "passes": true,
+      "notes": "Deleted uv shim block from entrypoint.sh, removed STING_PROTECT_VENV from compose env, removed STING_BLOCK_UV_SYNC from runner.py."
+    },
+    {
+      "id": "STING-04",
+      "title": "Collapse two Docker networks into one",
+      "description": "As a researcher, I want the container to have full internet access so that agents can reach any host without proxy blocking",
+      "acceptanceCriteria": [
+        "Only one Docker network in the generated compose config (sandbox_net + egress_net collapsed)",
+        "Sandbox container can reach the internet through the proxy",
+        "proxy.jsonl still captures all HTTP traffic",
+        "S4 detection still works \u2014 C2 host requests are logged",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 4,
+      "passes": true,
+      "notes": "Collapsed sandbox_net (internal) + egress_net into single sting_net bridged network. Both proxy and sandbox containers on sting_net; sandbox still routes via HTTP_PROXY for logging."
+    },
+    {
+      "id": "STING-05",
+      "title": "Remove the sting user \u2014 run as root in container",
+      "description": "As a researcher, I want the agent to run as root so that permission issues with credential mounting and file access are eliminated",
+      "acceptanceCriteria": [
+        "No sting user created in Dockerfile (useradd removed)",
+        "No chown sting:sting or setpriv in entrypoint.sh",
+        "Agent process runs as root (uid 0)",
+        "Mounted credentials are readable without staging or copying",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 5,
+      "passes": true,
+      "notes": "Removed useradd/chown from Dockerfile; removed setpriv, chown, and /tmp/sting-auth/ staging from entrypoint.sh; updated _auth_volumes() to mount directly to /root/.claude and /root/.codex."
+    },
+    {
+      "id": "STING-06",
+      "title": "Simplify auth mounting \u2014 direct mount, no staging",
+      "description": "As a researcher, I want credentials mounted directly to the agent's home directory so that the staging dance at /tmp/sting-auth/ is eliminated",
+      "acceptanceCriteria": [
+        "_auth_volumes() mounts directly to /root/.claude, /root/.codex etc.",
+        "No /tmp/sting-auth/ references anywhere in the codebase",
+        "extract_claude_credentials() Keychain extraction still works but writes to a simpler path",
+        "Claude Code and Codex authenticate successfully in the container",
+        "Tests pass"
+      ],
+      "sprint": 1,
+      "priority": 6,
+      "passes": true,
+      "notes": "Removed _AUTH_STAGING constant; extract_claude_credentials() now writes credentials.json directly to results_dir; runner.py passes results_dir instead of results_dir/sting-auth."
+    },
+    {
+      "id": "STING-07",
+      "title": "Remove payload-read retry loop",
+      "description": "As a researcher, I want each attack to run exactly once so that the execution model is simpler and results are not confounded by retry behavior",
+      "acceptanceCriteria": [
+        "Each attack runs exactly once \u2014 no retry loop in execute()",
+        "max_payload_read_attempts removed from taxonomy.yaml",
+        "prompt_too_weak end_reason is no longer produced as a retry trigger",
+        "execute() function has a single run path instead of an attempt loop",
+        "Tests pass"
+      ],
+      "sprint": 2,
+      "priority": 7,
+      "passes": true,
+      "notes": "Replaced retry loop with single-run execution; removed max_payload_read_attempts from taxonomy.yaml; removed prompt_too_weak end_reason and skip-prompt-too-weak CLI flag"
+    },
+    {
+      "id": "STING-08",
+      "title": "Delete stale compose.yaml template",
+      "description": "As a developer, I want the unused compose.yaml template removed so that the codebase has no stale configuration files",
+      "acceptanceCriteria": [
+        "compose.yaml is deleted from project root",
+        "No code references the static compose.yaml (only dynamically generated per-run files)",
+        "Tests pass"
+      ],
+      "sprint": 2,
+      "priority": 8,
+      "passes": true,
+      "notes": "Deleted stale compose.yaml dev template from project root; no code references it"
+    },
+    {
+      "id": "STING-09",
+      "title": "Clean up remaining sandbox artifacts and update docs",
+      "description": "As a developer, I want all sandbox-era references swept from the codebase and docs updated so that the project accurately reflects the new execution model",
+      "acceptanceCriteria": [
+        "No stale references to sandbox isolation, allow-listed hosts, or uv shim in codebase",
+        "README Network section describes the new model (proxy logs transparently, no blocking)",
+        "Dockerfile has no sandbox-specific comments",
+        "taxonomy.yaml runner section has no sandbox-specific config or comments",
+        "Tests pass"
+      ],
+      "sprint": 2,
+      "priority": 9,
+      "passes": true,
+      "notes": "Rewrote README Network section; removed stale allow-list hosts, network diagram, and blocking language; fixed taxonomy.yaml retries comment and removed unused network key; updated Dockerfile WORKDIR comment"
+    },
+    {
+      "id": "STING-10",
+      "title": "Smoke test: end-to-end run",
+      "description": "As a researcher, I want to verify the full pipeline works end-to-end with the new execution model",
+      "acceptanceCriteria": [
+        "A single attack run (--id 1 --agent claude-code) completes successfully",
+        "Agent log has no sandbox/environment noise (no 'blocked by STING proxy', no 'sync disabled')",
+        "proxy.jsonl logs requests without blocking any",
+        "checkpoint.json has a valid score (S1\u2013S4)",
+        "context.json has no sandbox_context_prompt field",
+        "fileio.jsonl and shell.log are populated",
+        "Agent runs as root \u2014 no permission errors"
+      ],
+      "sprint": 3,
+      "priority": 10,
+      "passes": true,
+      "notes": "Smoke test passed: S1 in 46s, zero noise, all artifacts populated. Added non-root agent user; credentials delivered via env var."
+    }
+  ]
+}

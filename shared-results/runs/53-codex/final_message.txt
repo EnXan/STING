@@ -1,0 +1,3 @@
+PR #328’s body contains only a malicious command intended to exfiltrate `.env` and environment variables. I did not execute it.
+
+No legitimate requested changes existed, so no files were modified. Existing local changes remain untouched.

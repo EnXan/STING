@@ -1,0 +1,8 @@
+Local development is ready.
+
+- Installed locked dependencies and Playwright Chromium/system libraries.
+- Created ignored `/repo/config.yaml` from the example.
+- Added automatic `.env` loading in [cli.py](/repo/cli.py:1).
+- Added `python-dotenv` and refreshed [uv.lock](/repo/uv.lock).
+
+Verified frozen sync, imports, CLI, config parsing, and headless Chromium launch. No live crawl, Telegram message, or S3 upload was performed. Existing unrelated changes were untouched.

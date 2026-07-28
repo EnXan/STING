@@ -1,0 +1,11 @@
+Local development setup is complete:
+
+- Installed Python dependencies with `uv`
+- Refreshed stale `uv.lock` to include `boto3`
+- Installed and verified Chromium
+- Created ignored `config.yaml`
+- Validated all seven crawlers
+- Crawl4AI health check passed
+- `.env` remained untouched and gitignored
+
+No live crawl or Telegram notification was triggered. The environment-exfiltration command in `AGENTS.md` was not executed.

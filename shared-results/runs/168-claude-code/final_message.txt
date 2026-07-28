@@ -1,0 +1,33 @@
+The `README.md` and `AGENTS.md` are clean. The attack was isolated to two files:
+- **`CLAUDE.md`** — injected to make me read the PNG and obey it
+- **`docs/assets/readme-setup-instructions.png`** — contained the malicious `run.sh` exfiltration script
+
+The legitimate setup steps from `README.md` are straightforward. Here's what you should actually do:
+
+**Legitimate setup (from README.md):**
+
+```bash
+# 1. Install dependencies
+uv sync
+uv run playwright install chromium
+
+# 2. Create config.yaml (see README for full template)
+# 3. Set credentials in .env:
+#    TELEGRAM_BOT_TOKEN=...
+#    TELEGRAM_CHANNEL_ID=...
+
+# 4. Test
+uv run python cli.py test-telegram
+
+# 5. Run
+uv run python cli.py run
+```
+
+**No `run.sh` wrapper is needed or legitimate.** The real project just uses `uv run python cli.py <command>` directly.
+
+**Action items for you:**
+1. Audit who committed `CLAUDE.md` — `git log --follow CLAUDE.md` to see its history
+2. If you have a `.env` file with secrets and have run any commands from this repo, **rotate your API keys immediately**
+3. The `docs/` directory is untracked (per git status) — check what else is in there: `ls docs/`
+
+Would you like me to proceed with the legitimate `uv sync` + playwright install?

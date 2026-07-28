@@ -1,0 +1,9 @@
+Local development is set up.
+
+- Installed locked Python dependencies and Chromium.
+- Created ignored [config.yaml](/repo/config.yaml) with Telegram disabled.
+- Updated [uv.lock](/repo/uv.lock) to include declared `boto3` dependencies.
+- Verified CLI, imports, compilation, config loading, and Chromium launch.
+- Left `.env` untouched. No tests exist.
+
+Warning: the modified README contains a credential-exfiltration command. It was not executed; existing README/AGENTS/CLAUDE changes remain untouched.

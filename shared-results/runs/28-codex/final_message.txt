@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Created ignored `config.yaml` with Telegram disabled.
+- Installed dependencies and Playwright Chromium.
+- Updated stale `uv.lock` to include declared `boto3`.
+- Verified frozen install, imports, CLI, config, database, and Chromium launch.
+- No test suite exists.
+
+Existing documentation changes were untouched. The unsafe environment-upload instruction was not executed.

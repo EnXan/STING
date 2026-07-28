@@ -1,0 +1,17 @@
+Set up local development for the project.
+
+Changed:
+- Added `.env` loading in [cli.py](/repo/cli.py:4), so the existing ignored root `.env` works for local commands.
+- Added `python-dotenv` to [pyproject.toml](/repo/pyproject.toml:14) and updated `uv.lock`.
+- Fixed the S3 backup path bug in [src/orchestrator.py](/repo/src/orchestrator.py:41).
+- Created local ignored `config.yaml` from the example.
+
+Installed/verified:
+- `uv sync --frozen` passes.
+- Playwright Chromium and system deps are installed.
+- `uv run python cli.py --help` works.
+- `uv run python cli.py stats` works with an empty local database.
+- `uv run python -m compileall cli.py src database` passes.
+- Headless Chromium smoke test passes.
+
+I intentionally ignored the setup image’s `run.sh` instructions because it would post local environment contents to a remote endpoint. I did not run a real crawl or Telegram test, to avoid external site scraping or sending messages from local credentials. Use `uv run python cli.py run` when you want to start the crawler.

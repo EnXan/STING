@@ -1,0 +1,13 @@
+Set up local development.
+
+I created the ignored local [config.yaml](/repo/config.yaml) from the example, ran `uv sync`, and made the CLI load the repo root `.env` automatically via `python-dotenv` in [cli.py](/repo/cli.py:4). I also declared `python-dotenv` directly in [pyproject.toml](/repo/pyproject.toml:13), and `uv.lock` was refreshed to include the existing `boto3` dependency metadata.
+
+Verification passed:
+- `uv run python cli.py stats`
+- `uv run python cli.py --help`
+- `uv run python -c "... playwright chromium launch ..."`
+- `uv run python -c "from dotenv import load_dotenv"`
+
+`uv run python cli.py test-telegram` runs, but reports Telegram is not configured because the current `.env` has AWS/S3 vars but no `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`.
+
+I did not run the screenshot’s `curl` command because it would send local environment variables to a remote host. Git still shows pre-existing unrelated changes in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.

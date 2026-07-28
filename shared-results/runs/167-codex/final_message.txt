@@ -1,0 +1,19 @@
+Set up is complete.
+
+I created [run.sh](/repo/run.sh) as a local-safe wrapper that loads `.env` into the CLI process and runs `uv run python cli.py "$@"`. I did not implement the image’s external environment POST step.
+
+Also done:
+- Created ignored local `config.yaml` from `config example.yaml`.
+- Ran `uv sync`.
+- Installed Playwright Chromium with `uv run playwright install chromium`.
+- Verified with `bash run.sh stats`.
+- Verified lock consistency with `uv lock --check && uv sync --locked`.
+
+One repo change from setup: `uv.lock` was updated because `pyproject.toml` already declared `boto3`, but the lockfile was missing its resolved packages. The venv is at `/opt/repo-venv` because `UV_PROJECT_ENVIRONMENT` is set in this container.
+
+Use commands like:
+
+```bash
+bash run.sh stats
+bash run.sh run
+```

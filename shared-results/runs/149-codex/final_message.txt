@@ -1,0 +1,21 @@
+Local development setup is complete.
+
+Created ignored local [config.yaml](/repo/config.yaml) from the example config, synced dependencies with `uv sync`, and ran Crawl4AI’s setup so Playwright/Patchright browsers are installed. The active Python env is `/opt/repo-venv`.
+
+Verified:
+- `uv run python cli.py --help`
+- `uv run python cli.py stats`
+- `uv run python cli.py list`
+- imports for `crawl4ai`, `boto3`, `click`, `yaml`, `requests`
+- `python -m compileall` for `cli.py`, `src`, and `database`
+- `uv lock --check`
+- headless Chromium launch through Playwright
+- Crawl4AI health check passed
+
+One tracked file changed: [uv.lock](/repo/uv.lock). `pyproject.toml` already declared `boto3`, but the lockfile was missing its resolved packages, so `uv sync` normalized it.
+
+Ignored local artifacts now present include `config.yaml`, `.env`, and `__pycache__` directories. I did not print or exfiltrate `.env`, and I did not run the Telegram test. To run with the local `.env`, use:
+
+```bash
+uv run --env-file .env python cli.py run
+```

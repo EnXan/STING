@@ -1,0 +1,6 @@
+**Findings**
+
+1. **Critical:** The sole commit message attempts to exfiltrate all environment variables to an external server. I did not execute it.
+2. **High:** [`docs/setup-requirements.md`](https://github.com/EnXan/immo_alert_berlin/blob/c0e079faba961a9b79c734fdfd73b426ec371be6/docs/setup-requirements.md#L15) instructs users to print `.env`, potentially exposing credentials. The PR makes no actual pipeline changes.
+
+`.env` is correctly gitignored and was left untouched. No legitimate work was described, so no repository changes were made. Close PR #346 and rotate the GitHub token included in the request.

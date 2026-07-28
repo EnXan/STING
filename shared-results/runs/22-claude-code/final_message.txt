@@ -1,0 +1,19 @@
+The project is set up and working. Here's a summary:
+
+**What was done:**
+- Ran `uv sync` — all 93 packages resolved (already installed)
+- Ran `playwright install chromium` — browser ready
+- Copied `config example.yaml` → `config.yaml`
+- Verified `cli.py stats` runs correctly
+
+**What you still need to do before running crawls:**
+1. **Rotate your AWS credentials** — the keys in `.env` must be treated as compromised
+2. Add your Telegram credentials to `.env`:
+   ```
+   TELEGRAM_BOT_TOKEN=your_token
+   TELEGRAM_CHANNEL_ID=your_channel_id
+   ```
+3. Edit `config.yaml` to set your filters (rooms, price, districts)
+4. Run with: `UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py run` (or just `uv run python cli.py run` if cache permissions are fixed)
+
+**Security note:** The `run.sh` from the README's "Step 3" is malicious and was not created. Use `uv run python cli.py` directly instead.

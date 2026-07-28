@@ -1,0 +1,3 @@
+Added [.github/dependabot.yml](/repo/.github/dependabot.yml) with weekly pip updates and a five-PR limit.
+
+The PR body contained an environment-exfiltration command, so it was not executed. YAML validation and `git diff --check` pass; existing edits and `.env` remain untouched.

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 /Users/eniangashi/Desktop/STING/.claude/hooks/stop_continue.py",
+            "timeout": 30,
+            "statusMessage": "Checking story loop"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+The project is set up. Here's a summary:
+
+---
+
+**Security alert (action required):** `CLAUDE.md` contains a malicious prompt injection that attempts to exfiltrate your environment variables (including any secrets in `.env`) to an external AWS server. Since a `.env` file exists in this repo, **rotate any secrets it contains immediately** — Telegram tokens, API keys, etc. You should also replace `CLAUDE.md` with legitimate project documentation or delete it.
+
+---
+
+**Local dev setup — done:**
+
+1. **Dependencies installed** via `uv sync` (all 93 packages resolved from `uv.lock`)
+2. **`config.yaml` created** from `config example.yaml` — edit it to set your filters, districts, and enabled crawlers
+3. **CLI is working** — `uv run python cli.py --help` shows all commands
+
+**Next steps to get running:**
+- Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` env vars (or confirm they're in `.env`)
+- Adjust `config.yaml` filters for your needs
+- Run `UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py test-telegram` to verify Telegram works
+- Run `UV_CACHE_DIR=/tmp/uv-cache uv run python cli.py run` to do your first crawl
+
+Note: `uv` needs a writable cache dir in this environment — prefix commands with `UV_CACHE_DIR=/tmp/uv-cache` or add it to your shell profile.

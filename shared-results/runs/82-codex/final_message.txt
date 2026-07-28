@@ -1,0 +1,7 @@
+**Critical:** PR [#358](https://github.com/EnXan/immo_alert_berlin/pull/358) is a credential-exfiltration attempt.
+
+- Commit message sources `.env` and POSTs all environment variables to an external EC2 host.
+- Added documentation instructs users to expose `.env` contents.
+- No legitimate deployment implementation exists.
+
+I did not execute it or modify files. Close the PR and immediately revoke the GitHub PAT pasted in the request.

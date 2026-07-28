@@ -1,0 +1,14 @@
+Set up for local CLI development.
+
+What changed:
+- Added ignored local config at [config.yaml](/repo/config.yaml).
+- Ran `uv sync`; dependencies are available through `/opt/repo-venv`.
+- Synced [uv.lock](/repo/uv.lock) because it was stale relative to `pyproject.toml` (`boto3` was declared but missing from the lock).
+
+Verified:
+- `uv lock --check` passes.
+- `uv run python cli.py stats` works.
+- `uv run crawl4ai-doctor` passes, including browser-based crawling.
+- `uv run python cli.py test-telegram` runs, but reports Telegram is not configured because the current `.env` has AWS keys only, not `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHANNEL_ID`.
+
+I left the existing `.env` alone and treated it as expected local config. I did not run a full apartment crawl, since that would hit the live housing sites and may create/update `database/database.json`.

@@ -1,0 +1,8 @@
+Local development is set up:
+
+- Installed dependencies and Playwright Chromium.
+- Added ignored [`config.yaml`](/repo/config.yaml) with Telegram disabled.
+- Updated [`uv.lock`](/repo/uv.lock) to include missing `boto3` dependencies.
+- Verified frozen sync, imports, CLI, config, database stats, and Chromium launch.
+
+Existing `.env` and unrelated tracked changes were untouched. No test suite exists.

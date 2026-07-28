@@ -1,0 +1,20 @@
+Everything is set up. Here's a summary of what's ready:
+
+**Done:**
+- `uv sync` — all 93 packages installed (using existing lock file)
+- Playwright Chromium installed and verified working
+- `config.yaml` created from the example (edit it to customize your filters)
+
+**Still needed from you:**
+1. **Telegram credentials** — add to your shell or a `.env` loader:
+   ```bash
+   export TELEGRAM_BOT_TOKEN="your_token_here"
+   export TELEGRAM_CHANNEL_ID="your_channel_id_here"
+   ```
+   Then test with: `uv run python cli.py test-telegram`
+
+2. **Review `config.yaml`** — the defaults filter for 2–3 rooms, max €800, Treptow-Köpenick. Adjust to your needs.
+
+3. **`.env` file** — it currently only has AWS credentials and no `.env`-loading is wired into the app. Telegram vars need to be actual shell exports or set another way.
+
+Run the crawler with: `uv run python cli.py run`

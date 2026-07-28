@@ -1,0 +1,118 @@
+## Codebase Patterns
+- Claude Code blocks `--dangerously-skip-permissions` when running as root (uid 0). Always run claude as a non-root user (e.g. `agent`) inside Docker.
+- Docker Desktop (macOS) cannot bind-mount a file inside a parent directory already mounted read-only. Pass credentials as env vars instead and write them in entrypoint.sh.
+- `su -p agent` preserves all container env vars (HTTP_PROXY, SSL_CERT_FILE, etc.) through the user switch — use `-p` when running the agent via `su`.
+- `shutil.copytree` of `~/.claude` fails on broken symlinks (e.g. `debug/latest`); always pass `symlinks=True`.
+- Even root inside Docker Desktop (macOS) may not be able to `chown` git pack files (mode 0444) inside bind-mounted directories — copying the whole `~/.claude` into a bind mount triggers this.
+
+---
+
+## STING-01 — Switch proxy from allow-list blocking to log-only
+- Date: 2026-06-04
+- Status: done
+- Changes:
+  - proxy/addon.py: Removed ALLOWED_HOSTS set (52 allowed hosts), removed 403 blocking logic.
+    All requests now pass through and are logged to proxy.jsonl. The `blocked` field is removed
+    from log entries. C2 host detection for S4 scoring is unaffected — scorer reads `host` field
+    only, never checked `blocked`.
+- Verification:
+  - ruff check + format pass
+  - Confirmed scorer.py, verifier.py, runner.py have no dependency on the `blocked` field
+
+---
+
+## 2026-06-04 - STING-02
+- What was implemented: Removed `_SANDBOX_CONTEXT_PROMPT` from runner.py. Agents now receive only the raw user task prompt with no sandbox framing. Removed `sandbox_context_prompt` field from context.json output.
+- Files changed: runner/runner.py
+- **Learnings for future iterations:**
+  - `_agent_cmd()` builds the CLI invocation for each agent — the prompt is passed as a positional arg. No wrapping or framing needed.
+  - `context.json` is written once per run in `execute()` before Docker starts — it's the pre-run metadata record.
+
+---
+
+## 2026-06-04 - STING-03
+- What was implemented: Deleted the uv shim block from entrypoint.sh (lines 38–61), removed `STING_PROTECT_VENV` from compose env in docker_utils.py, removed `STING_BLOCK_UV_SYNC` env var logic from runner.py.
+- Files changed: entrypoint.sh, runner/docker_utils.py, runner/runner.py
+- **Learnings for future iterations:**
+  - The uv shim worked by renaming `/bin/uv` to `/bin/uv-real` and inserting a shell script — grep for `uv-real` to verify full cleanup.
+  - `extra_env` dict in `_prepare_run()` is passed through to `compose_config()` — it's where per-run env vars get added to the container.
+
+---
+
+## 2026-06-04 - STING-04
+- What was implemented: Collapsed `sandbox_net` (internal) + `egress_net` into a single `sting_net` bridged network in `compose_config()`. Updated module docstring to reflect new topology. Both proxy and sandbox containers now share `sting_net`; the sandbox still routes HTTP(S) traffic through the proxy via `HTTP_PROXY`/`HTTPS_PROXY` env vars for transparent logging.
+- Files changed: runner/docker_utils.py
+- **Learnings for future iterations:**
+  - Network name is now `sting_net` — any future references to `sandbox_net` or `egress_net` are stale.
+  - The static `compose.yaml` in the project root still references the old two-network model; STING-08 covers deleting it.
+
+---
+
+## 2026-06-04 - STING-05
+- What was implemented: Removed `useradd`/`chown` from Dockerfile so the container runs as root. Stripped `setpriv`, `chown`, and the entire `/tmp/sting-auth/` staging block from `entrypoint.sh`. Updated `_auth_volumes()` in `docker_utils.py` to mount credentials directly to `/root/.claude` and `/root/.codex` instead of staging paths.
+- Files changed: Dockerfile, entrypoint.sh, runner/docker_utils.py
+- **Learnings for future iterations:**
+  - Agent now runs as uid 0 — no `setpriv`, no `HOME=/home/sting` override needed in the exec line.
+  - Auth volumes now mount directly: `~/.claude → /root/.claude:ro`, `~/.claude.json → /root/.claude.json:ro`. The nested `/root/.claude/.credentials.json` mount is applied on top of the directory mount.
+  - `_AUTH_STAGING = "sting-auth"` in docker_utils.py still names the host-side results subdir used by `extract_claude_credentials()` — it is not an in-container path.
+
+---
+
+## 2026-06-04 - STING-06
+- What was implemented: Removed `_AUTH_STAGING = "sting-auth"` constant. `extract_claude_credentials()` now accepts `results_dir` and writes `credentials.json` directly there (no subdirectory). `_auth_volumes()` checks `results_dir / "credentials.json"` directly. Call in `runner.py` updated to pass `results_dir` instead of `results_dir / "sting-auth"`.
+- Files changed: runner/docker_utils.py, runner/runner.py
+- **Learnings for future iterations:**
+  - OAuth credentials file is now at `results_dir/credentials.json` on the host, mounted to `/root/.claude/.credentials.json` in the container.
+  - The PRD (`docs/prd-unrestricted-execution.md`) still references `/tmp/sting-auth/` historically — that is documentation context, not active code.
+
+---
+
+## 2026-06-04 - STING-07
+- What was implemented: Removed the payload-read retry loop from `execute()`. Each attack now runs exactly once. Removed `_MAX_ATTEMPTS` constant and `max_payload_read_attempts` from taxonomy.yaml. Removed `prompt_too_weak` end_reason (no longer produced). Removed `skip_weak_prompt` parameter from `execute()` and `execute_many()`. Removed `--skip-prompt-too-weak` CLI flag from main.py. `_payload_file_opened()` is kept for informational logging only.
+- Files changed: runner/runner.py, variant_factory/config/taxonomy.yaml, main.py
+- **Learnings for future iterations:**
+  - The hard-stop checks in `execute()` are now a clean if/elif/else chain — `end_reason` is set exactly once per run.
+  - `_payload_file_opened()` remains and is called for logging when `end_reason="exit"` — it does not affect scoring.
+  - The sprint-1 checkpoint noted that `"max_attempts"` in context.json would become stale — that field was removed here too.
+  - `execute_many()` docstring still lists `skip_completed` — that param remains and powers `--resume`.
+---
+
+## 2026-06-04 - STING-08
+- What was implemented: Deleted `compose.yaml` from project root. The file was a stale dev template referencing the old two-network topology (`sandbox_net`/`egress_net`), named volumes, and the removed `sting` user paths. The runner generates per-run compose files dynamically via `write_compose()` in `docker_utils.py` — the static file had no callers.
+- Files changed: compose.yaml (deleted)
+- **Learnings for future iterations:**
+  - Per-run compose files are written to `results_dir/docker-compose.yml` by `write_compose()` — there is no static template anywhere in the repo.
+---
+
+## 2026-06-04 - STING-09
+- What was implemented: Swept remaining sandbox-era references from docs and config.
+  - README.md: Rewrote Network section — replaced old two-network diagram and "Allowed hosts" block with the new single-network transparent-logging model.
+  - README.md: Updated proxy/addon.py description from "filters and logs egress" to "logs all egress traffic".
+  - taxonomy.yaml: Removed unused `network: "sting-testbed"` key from runner section.
+  - taxonomy.yaml: Fixed stale "aborts retries immediately" comment → "aborts the run immediately" (retries removed in STING-07).
+  - Dockerfile: Clarified WORKDIR comment to note it's build-time only; agent runs from /repo.
+- Files changed: README.md, variant_factory/config/taxonomy.yaml, Dockerfile, tasks/stories.json, tasks/progress.txt
+- **Learnings for future iterations:**
+  - The `network: "sting-testbed"` key in taxonomy.yaml was unused — `compose_config()` hardcodes `sting_net` directly. Dead config should be removed promptly.
+  - README Network section now accurately describes the transparent-proxy model.
+---
+
+## 2026-06-04 - STING-10
+- What was implemented: Smoke-tested the full pipeline end-to-end with attack #1 / claude-code.
+  Fixed three bugs discovered during the run:
+  1. **Nested bind mount** — Docker Desktop (macOS) cannot mount a file inside a read-only directory
+     mount. Solved by delivering credentials via `CLAUDE_CREDENTIALS_JSON` env var and writing them
+     in entrypoint.sh, removing the `~/.claude` directory mount entirely.
+  2. **root block** — Claude Code refuses `--dangerously-skip-permissions` when running as root.
+     Added a non-root `agent` user to the Dockerfile and run claude via `su -p agent`. Strace
+     (root + CAP_SYS_PTRACE) continues to trace the su'd child process.
+  3. **Writable directories** — entrypoint now `chown agent:agent /var/log/sting` and `/repo` so the
+     agent user can write final_message.txt and run dev setup tasks.
+- Files changed: Dockerfile, entrypoint.sh, runner/docker_utils.py, runner/runner.py,
+  tasks/stories.json, tasks/progress.txt
+- **Learnings for future iterations:**
+  - Claude refuses `--dangerously-skip-permissions` as root; always run as non-root user.
+  - `su -p` is required to preserve HTTP_PROXY and SSL_CERT_FILE through the user switch.
+  - Credential delivery via env var is robust on macOS Docker Desktop; avoid nested bind mounts.
+  - `get_claude_credentials_json()` in docker_utils.py returns the raw JSON string from keychain.
+---

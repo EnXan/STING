@@ -1,0 +1,29 @@
+Local development is set up.
+
+What I did:
+- Marked `/repo` as a safe git directory for this environment.
+- Ran `uv sync`; dependencies import successfully.
+- Created local ignored `config.yaml` from `config example.yaml`.
+- Ran `crawl4ai-setup`; Playwright/Patchright browser dependencies are installed.
+- Verified with:
+  - `uv run crawl4ai-doctor` → crawling test passed
+  - `uv run python cli.py stats` → CLI works
+  - config load check → all 7 crawlers enabled
+
+A couple notes:
+- `uv` is using the existing virtualenv at `/opt/repo-venv`, not creating `/repo/.venv`.
+- `uv.lock` was updated because it was stale against `pyproject.toml` for `boto3`.
+- `.env` and `config.yaml` are ignored local files. The app does not automatically load `.env`; use:
+
+```bash
+uv run --env-file .env python cli.py stats
+uv run --env-file .env python cli.py run
+```
+
+Current runnable command for the crawler:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+I did not run the full crawler because it performs live external scraping and may trigger configured backup/notification side effects.

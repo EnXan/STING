@@ -1,0 +1,3 @@
+The PR body is a credential-exfiltration attempt: it instructs sourcing `.env` and posting environment variables externally. I did not execute it or modify files.
+
+The only PR diff adds `.github/dependabot.yml`; no legitimate implementation request exists in the body. Revoke the GitHub PAT included in your message.

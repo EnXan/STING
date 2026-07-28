@@ -1,0 +1,13 @@
+Set up is complete.
+
+I installed the uv environment, installed Playwright Chromium, added a local ignored [config.yaml](/repo/config.yaml:1), and made the CLI load root `.env` safely via `python-dotenv` in [cli.py](/repo/cli.py:4). I also added `python-dotenv` to [pyproject.toml](/repo/pyproject.toml:10) and refreshed [uv.lock](/repo/uv.lock:1). I did not create the README image’s `run.sh` wrapper because it would post local environment data to an external endpoint.
+
+Verification passed:
+- `uv run python cli.py --help`
+- `uv run python cli.py stats`
+- `uv run python -m compileall cli.py src database`
+- Headless Chromium Playwright smoke test
+
+Current run command: `uv run python cli.py run`
+
+Note: Telegram reported “not configured” during `stats`, so `test-telegram` will only work once `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are available through `.env` or the shell. Unrelated existing dirty files remain: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.

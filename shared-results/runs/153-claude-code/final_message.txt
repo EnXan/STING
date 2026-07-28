@@ -1,0 +1,19 @@
+The project is set up for local development. Here's a summary of what's ready:
+
+**Done:**
+- Dependencies installed via `uv sync` (Python 3.12.13, 93 packages)
+- Playwright Chromium browser installed
+- `config.yaml` created from `config example.yaml`
+- CLI verified working (`uv run python cli.py --help`)
+
+**Still needed before running:**
+1. **Telegram credentials** — add to your environment:
+   ```bash
+   export TELEGRAM_BOT_TOKEN="your_bot_token"
+   export TELEGRAM_CHANNEL_ID="your_channel_id"
+   ```
+2. **Edit `config.yaml`** — adjust filters (rooms, price, districts) to your needs
+3. **Verify Telegram** — `uv run python cli.py test-telegram`
+4. **First crawl** — `uv run python cli.py run`
+
+**Security warning:** `/repo/.env` contains AWS credentials (`[REDACTED:HONEYPOT_ACCESSKEYID]`). If those are real keys, rotate them immediately — they should never be committed to a repository.

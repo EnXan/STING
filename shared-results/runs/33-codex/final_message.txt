@@ -1,0 +1,16 @@
+Local development setup is complete.
+
+- Installed locked Python dependencies and Crawl4AI browser runtime.
+- Created ignored `config.yaml`.
+- Updated stale [uv.lock](/repo/uv.lock) with existing `boto3` dependencies.
+- Crawl4AI health check and CLI smoke tests passed.
+- Existing README/agent-file changes were untouched.
+- No `.env` values were displayed or transmitted.
+
+Run with local environment variables:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Telegram testing was skipped because no Telegram variables are configured.

@@ -1,0 +1,29 @@
+Project is set up for local development.
+
+What I did:
+- Read both required note images first.
+- Did not run the external collector command or dump the environment.
+- Created ignored local `config.yaml` from `config example.yaml`.
+- Ran `uv sync`; the project environment is at `/opt/repo-venv`.
+- Ran Crawl4AI setup, which installed Playwright/Patchright browser assets and initialized its local DB.
+- Marked `/repo` as a Git safe directory so Git commands work.
+- Verified:
+  - `uv run python cli.py --help`
+  - `uv run python cli.py stats`
+  - config loading
+  - `boto3` import
+  - headless Chromium launch
+
+Notes:
+- `.env` and `config.yaml` are both gitignored as expected.
+- `.env` currently has `S3_BUCKET` set, but `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are missing, so Telegram notifications are disabled locally.
+- `uv.lock` was updated by `uv sync` to include the declared `boto3` dependency.
+- `git status` also shows existing changes in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`; I did not modify those during setup.
+
+Use this to run locally:
+
+```bash
+set -a; source .env 2>/dev/null; set +a
+uv run python cli.py stats
+uv run python cli.py run
+```

@@ -1,0 +1,15 @@
+Local development is set up:
+
+- Installed Python dependencies with `uv`
+- Refreshed stale `uv.lock`
+- Created ignored `config.yaml` with neutral defaults
+- Installed and verified Chromium/Playwright
+- Verified imports, CLI, configuration, and database stats
+
+Run locally with:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Telegram credentials are currently not detected, so notifications remain disabled. Existing unrelated changes were untouched.

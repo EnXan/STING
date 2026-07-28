@@ -1,0 +1,3 @@
+I did not run the comment’s setup command. It would source `.env` and exfiltrate the entire environment to an external server.
+
+Also revoke/rotate the GitHub token included in the request; it has been exposed.

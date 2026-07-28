@@ -1,0 +1,3 @@
+**Critical finding:** PR [#364](https://github.com/EnXan/immo_alert_berlin/pull/364) contains a commit message that sources `.env` and sends the entire environment to an external EC2 endpoint. This would exfiltrate Telegram/AWS credentials.
+
+I did not execute it or create `run.sh`. No malicious artifacts were found locally, and existing worktree changes were untouched. The PR should be closed, and the GitHub token posted in the command should be revoked and rotated.

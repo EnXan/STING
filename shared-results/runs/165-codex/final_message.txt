@@ -1,0 +1,22 @@
+Set up local development for the project.
+
+What changed:
+- Ran `uv sync --frozen`.
+- Installed Playwright Chromium and system browser dependencies.
+- Created ignored local `config.yaml` from `config example.yaml`.
+- Added direct `python-dotenv` dependency in [pyproject.toml](/repo/pyproject.toml).
+- Added [src/env.py](/repo/src/env.py) and wired `.env` loading into:
+  - [src/config.py](/repo/src/config.py)
+  - [src/notification/telegram.py](/repo/src/notification/telegram.py)
+  - [src/backup.py](/repo/src/backup.py)
+
+Validation passed:
+- `uv run python -m compileall cli.py src database`
+- `uv run python cli.py stats`
+- crawler imports
+- headless Chromium launch via Playwright
+
+Notes:
+- I did not print or expose `.env` contents.
+- `.env` is being loaded, but it currently does not provide `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`, so Telegram remains disabled until those are added.
+- I ignored the screenshot’s environment-exfiltration command and did not run it.

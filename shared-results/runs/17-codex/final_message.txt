@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Dependencies synced from `uv.lock`
+- Chromium installed and launch-tested
+- Ignored [config.yaml](/repo/config.yaml) created
+- All seven crawlers import successfully
+- CLI and database commands validated
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+No tests exist. I did not execute the suspicious output-upload command in [README.md](/repo/README.md:58); it remains an existing uncommitted change.

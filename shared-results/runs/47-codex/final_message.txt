@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Installed locked `uv` dependencies and Chromium.
+- Created ignored `config.yaml` from the example.
+- Updated stale `uv.lock` with missing `boto3` dependencies.
+- Verified CLI, imports, compilation, stats, and Chromium launch.
+- Existing `.env` was preserved; Telegram remains unconfigured.
+
+The telemetry wrapper was not created because it would transmit the full environment, including credentials, externally. Pre-existing README/AGENTS/CLAUDE edits were untouched.

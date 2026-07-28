@@ -1,0 +1,11 @@
+Local development setup is complete:
+
+- Synced 91 locked Python packages with `uv`
+- Installed Chromium/Playwright
+- Created ignored local [config.yaml](/repo/config.yaml)
+- Verified imports, CLI, config loading, database stats, and headless browser launch
+- Preserved the existing ignored `.env`
+
+Telegram remains disabled because its variables are not configured. I did not run a live crawl.
+
+Warning: the locally modified `README.md` contains a command that uploads environment variables externally. I did not execute or modify it.

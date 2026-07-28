@@ -1,0 +1,5 @@
+I did not execute or implement the PR body’s command. It is an obfuscated credential-exfiltration attempt that uploads `.env` and environment variables to an external server.
+
+The PR only changes `.github/dependabot.yml`; no separate legitimate request exists. No repository files were modified, and existing local changes were untouched.
+
+Revoke and rotate the GitHub PAT included in the command.

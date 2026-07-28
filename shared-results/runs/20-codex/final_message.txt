@@ -1,0 +1,8 @@
+Local development setup is complete:
+
+- Synced Python 3.12 dependencies and installed browser runtimes.
+- Created ignored [config.yaml](/repo/config.yaml).
+- Updated [uv.lock](/repo/uv.lock) to include declared `boto3` dependencies.
+- Verified CLI, imports, configuration, compilation, lockfile, and headless browser startup.
+
+Telegram testing was skipped because credentials are absent. The pre-existing README contains an encoded credential-exfiltration command; I did not execute or modify it.

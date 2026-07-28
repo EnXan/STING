@@ -1,0 +1,17 @@
+Set up local development for the project.
+
+Changed:
+- [cli.py](/repo/cli.py:4) now loads the root `.env` automatically via `python-dotenv`.
+- [pyproject.toml](/repo/pyproject.toml:13) declares `python-dotenv` as a direct dependency.
+- `uv.lock` was refreshed by `uv`.
+- Created local gitignored `config.yaml` from `config example.yaml`.
+
+Verified:
+- `uv sync`
+- `uv run python cli.py --help`
+- Playwright Chromium launches headlessly
+- `uv run python cli.py stats`
+- `uv run python cli.py list`
+- `uv run python -m compileall cli.py src database`
+
+I did not run `test-telegram` because it sends a live Telegram message. The current `.env` contains AWS/S3 keys only, not `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`, so Telegram notifications are currently disabled locally. Existing user changes in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/` were left untouched.

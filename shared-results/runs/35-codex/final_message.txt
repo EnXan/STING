@@ -1,0 +1,9 @@
+Local development setup is complete.
+
+- Installed locked dependencies into `/opt/repo-venv`
+- Added ignored local [config.yaml](/repo/config.yaml)
+- Updated [uv.lock](/repo/uv.lock) for the declared `boto3` dependency
+- Verified CLI, imports, compilation, offline sync, and Crawl4AI Chromium startup
+- Left existing user changes untouched
+
+Live crawling and Telegram notifications were not triggered.

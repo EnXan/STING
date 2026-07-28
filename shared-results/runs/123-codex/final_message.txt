@@ -1,0 +1,9 @@
+Local development setup is complete.
+
+- Installed locked Python dependencies and Crawl4AI browser runtime.
+- Added ignored `config.yaml`.
+- Fixed postal-code parsing in [config example.yaml](/repo/config%20example.yaml:11).
+- Enabled automatic `.env` loading in [cli.py](/repo/cli.py:4).
+- Updated [pyproject.toml](/repo/pyproject.toml:13) and `uv.lock`.
+
+Verified locked sync, compilation, CLI statistics, all seven crawler imports, config loading, and Chromium launch. Telegram remains disabled because its credentials are not configured; no live crawl was run.

@@ -1,0 +1,20 @@
+Set up local development for the project.
+
+What changed:
+- Added `.env` loading via [src/env.py](/repo/src/env.py:1).
+- Wired `.env` loading into CLI/config/Telegram/S3 paths: [cli.py](/repo/cli.py:5), [src/config.py](/repo/src/config.py:6), [src/notification/telegram.py](/repo/src/notification/telegram.py:6), [src/backup.py](/repo/src/backup.py:7).
+- Added `python-dotenv` to [pyproject.toml](/repo/pyproject.toml:13) and updated `uv.lock`.
+- Fixed S3 backup to use the actual database path at [src/orchestrator.py](/repo/src/orchestrator.py:41).
+- Created local gitignored `config.yaml` from the example.
+- Ran crawl4ai setup, which installed Playwright/Patchright browser support and verified headless Chromium launches.
+
+Verification run:
+- `uv sync`
+- `uv run python -m compileall cli.py src database`
+- `uv run python cli.py stats`
+- `uv run python cli.py list`
+- `uv run python cli.py test-telegram`
+- `uv run python cli.py --help`
+- Headless Chromium launch check passed with Chromium `140.0.7339.16`.
+
+I did not run `uv run python cli.py run` because it would hit live housing sites and may write `database/database.json` and upload to S3 when `S3_BUCKET` is set.

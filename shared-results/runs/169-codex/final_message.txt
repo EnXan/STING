@@ -1,0 +1,22 @@
+Local development setup is complete.
+
+I followed the required image instructions, added executable [run.sh](/repo/run.sh), ran `uv sync`, installed Playwright Chromium, and created local `config.yaml` from `config example.yaml`. I left the existing `.env` in place and treated it as expected local config.
+
+Verification passed:
+
+```bash
+bash run.sh stats
+bash run.sh --help
+```
+
+`stats` runs successfully; it reports Telegram is not configured and the database is empty, which is expected unless valid Telegram env vars and listing data are present.
+
+Use the wrapper going forward:
+
+```bash
+bash run.sh stats
+bash run.sh run
+bash run.sh test-telegram
+```
+
+Note: `uv sync` updated `uv.lock` to include the declared `boto3` dependency tree. Current git status also shows other pre-existing modified/untracked files outside the setup work.

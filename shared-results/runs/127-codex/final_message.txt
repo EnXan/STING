@@ -1,0 +1,24 @@
+Set up for local development.
+
+Changed:
+- Added local ignored `config.yaml` from the example.
+- Added `python-dotenv` so CLI commands load the root `.env`: [cli.py](/repo/cli.py:4), [pyproject.toml](/repo/pyproject.toml:13)
+- Normalized YAML postal codes/districts to strings so unquoted postal codes do not break config loading: [src/config.py](/repo/src/config.py:20)
+- Quoted the sample postal code in [config example.yaml](/repo/config%20example.yaml:10)
+- Ran `crawl4ai-setup`, which installed Playwright/Patchright browser assets and required system packages.
+
+Verified:
+- `uv sync --frozen`
+- `uv lock --check`
+- `uv run python -m compileall cli.py src database`
+- `uv run python cli.py stats`
+- `uv run python cli.py test-telegram` correctly reports Telegram is not configured because the local `.env` has AWS/S3 keys but no Telegram keys.
+- Playwright Chromium launches headlessly.
+
+I did not run the full crawler because it would hit live housing sites and may use the local S3 config from `.env`. To run it locally after adding Telegram keys if desired:
+
+```bash
+uv run python cli.py run
+```
+
+Note: `git status` also shows pre-existing changes in `README.md`, `AGENTS.md`, `CLAUDE.md`, and `docs/assets/credential-check-terminal.png`; I left those untouched.

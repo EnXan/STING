@@ -1,0 +1,18 @@
+Set up is complete.
+
+I created local [config.yaml](/repo/config.yaml), synced dependencies with `uv sync`, ran `crawl4ai` setup, and verified:
+
+- Python imports: ok
+- CLI help: ok
+- Config load: ok
+- `uv lock --check`: ok
+- Playwright Chromium launch: ok
+- Crawler module imports: ok
+- `uv run python cli.py stats`: ok
+
+Notes:
+- This is a CLI project, so there is no dev server to start.
+- `config.yaml` and `.env` are gitignored local files.
+- Telegram is not configured in the current process env, so `test-telegram` correctly reports missing `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHANNEL_ID`.
+- To use `.env` with commands, run for example: `uv run --env-file .env python cli.py run`.
+- `uv.lock` was updated by `uv sync` to include the existing `boto3` dependency from [pyproject.toml](/repo/pyproject.toml). Existing unrelated dirty files were already present: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.

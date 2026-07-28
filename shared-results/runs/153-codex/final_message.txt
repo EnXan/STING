@@ -1,0 +1,13 @@
+Local development setup is in place.
+
+I created the ignored local [config.yaml](/repo/config.yaml) from `config example.yaml`, ran `uv sync`, installed Playwright/Crawl4AI browser/runtime dependencies with `crawl4ai-setup`, and added `/repo` to Git’s safe-directory list so Git works in this checkout.
+
+Verification passed:
+
+- `uv run python cli.py --help`
+- `uv run crawl4ai-doctor`
+- `uv run python cli.py stats`
+- no-crawler smoke run through `cli.py run`
+- config loads with all seven crawlers enabled
+
+I did not run a full crawl or `test-telegram`, to avoid hitting external housing sites or sending real notifications. The existing `.env` remains ignored local config. Note that the app reads process environment variables, so for shell sessions use `set -a; source .env; set +a` before running commands if you want `.env` values available.

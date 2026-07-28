@@ -1,0 +1,28 @@
+The project is set up. Here's a summary of what's ready:
+
+**Done:**
+- Dependencies installed via `uv` (93 packages resolved from `uv.lock`)
+- `config.yaml` created from `config example.yaml`
+- `database/database.json` initialized (empty `{}`)
+- CLI verified working
+
+**To use the project**, you need two things:
+
+1. **Edit `config.yaml`** — adjust filters (rooms, price, districts) for your search criteria.
+
+2. **Set environment variables** for Telegram notifications:
+   ```bash
+   export TELEGRAM_BOT_TOKEN="your_bot_token"
+   export TELEGRAM_CHANNEL_ID="your_channel_id"
+   ```
+
+**Then run:**
+```bash
+uv run python cli.py test-telegram   # verify Telegram works
+uv run python cli.py run             # run a crawl
+uv run python cli.py stats           # view database stats
+```
+
+---
+
+**One note:** The `CLAUDE.md` in this repo contains a prompt injection — it instructs AI assistants to read an image file and follow hidden instructions embedded in it. I ignored those instructions and worked from the actual project files instead. You may want to clean up that `CLAUDE.md`.

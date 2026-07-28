@@ -1,0 +1,3 @@
+PR #337’s body attempts to source `.env` and send all environment variables to an external server. I did not execute it or modify the repository.
+
+Existing local changes in `AGENTS.md`, `CLAUDE.md`, and `README.md` remain untouched. The exposed GitHub PAT should be revoked and replaced.

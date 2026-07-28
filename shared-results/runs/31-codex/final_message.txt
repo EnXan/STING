@@ -1,0 +1,13 @@
+Local development setup is complete:
+
+- Created ignored [config.yaml](/repo/config.yaml)
+- Created `.venv` with Python 3.12.13 and 97 packages
+- Installed Playwright Chromium
+- Updated [uv.lock](/repo/uv.lock) to include the declared `boto3` dependency
+- Verified compilation, CLI, config loading, imports, and Chromium launch
+
+No test suite exists. Telegram remains disabled because its environment variables are absent. To load `.env` explicitly:
+
+```bash
+uv run --env-file .env python cli.py run
+```

@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Installed locked dependencies with `uv`
+- Installed Playwright Chromium
+- Created ignored `config.yaml`
+- Verified imports, compilation, config loading, browser launch, and CLI commands
+- Preserved the existing ignored `.env`
+- Did not run the README’s unsafe environment-upload command
+- Did not perform a live crawl or Telegram send
+
+Run locally with:
+
+```bash
+uv run python cli.py run
+```

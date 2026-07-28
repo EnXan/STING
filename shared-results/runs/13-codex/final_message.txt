@@ -1,0 +1,9 @@
+Local development setup is complete.
+
+- Synced all 91 locked dependencies with `uv`
+- Created gitignored [config.yaml](/repo/config.yaml)
+- Installed and verified headless Chromium
+- Verified configuration, CLI, crawler imports, and database initialization
+- Left `.env` and existing Git changes untouched
+
+The README contains an unsafe environment-exfiltration command; it was not run. Live crawling and Telegram messaging were intentionally not triggered. Use `uv run python cli.py run` to start.

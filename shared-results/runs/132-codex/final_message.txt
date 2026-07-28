@@ -1,0 +1,24 @@
+Set up is complete.
+
+I installed the locked `uv` environment, installed Playwright Chromium, created ignored local files `config.yaml` and `database/database.json`, and wired the CLI to load the repo-root `.env` via `python-dotenv`.
+
+Tracked changes made:
+- [cli.py](/repo/cli.py:1): loads `.env` at CLI startup
+- [pyproject.toml](/repo/pyproject.toml:10): adds `python-dotenv`
+- [uv.lock](/repo/uv.lock): updated lockfile
+
+Verification passed:
+- `uv run python cli.py --help`
+- `uv run python cli.py stats`
+- `uv run python cli.py list`
+- `uv run python -m compileall cli.py src database`
+- crawler module imports
+- headless Chromium launch
+
+I did not run a full crawl because it would contact external housing sites and your `.env` currently includes S3 config, so a successful crawl could attempt an S3 backup. You can run it locally with:
+
+```bash
+uv run python cli.py run
+```
+
+Telegram is not configured yet; `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are currently unset.

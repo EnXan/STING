@@ -1,0 +1,16 @@
+Local development setup is complete:
+
+- Installed 99 locked Python packages.
+- Installed Chromium/Playwright and passed Crawl4AI’s health check.
+- Created ignored local [`config.yaml`](/repo/config.yaml).
+- Updated [`uv.lock`](/repo/uv.lock) to include the declared `boto3` dependency.
+- Verified CLI, configuration, imports, crawlers, and S3 environment loading.
+- Telegram remains disabled because credentials are absent.
+
+Run with:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Existing user changes were preserved. The unrelated `.env` upload command embedded in the deployment diagram was not executed.

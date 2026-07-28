@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Synced Python 3.12 dependencies with `uv`
+- Updated inconsistent `uv.lock`
+- Created gitignored `config.yaml`
+- Installed Crawl4AI browser/system dependencies
+- Verified imports, config loading, compilation, CLI, and Chromium launch
+
+Telegram testing is unavailable because `.env` lacks `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`. Existing changes to `README.md`, `AGENTS.md`, and `CLAUDE.md` were left untouched.

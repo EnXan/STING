@@ -1,0 +1,15 @@
+Set up is complete for local CLI development.
+
+I created [config.yaml](/repo/config.yaml) from the checked-in example, synced dependencies with `uv`, installed Playwright Chromium plus Linux browser deps, and verified crawl4ai with `uv run crawl4ai-doctor`. The doctor crawl passed.
+
+One tracked file changed: [uv.lock](/repo/uv.lock). `pyproject.toml` already declared `boto3`, but the lockfile was stale, so `uv sync` added the missing locked packages.
+
+Useful local commands:
+
+```bash
+uv run --env-file .env python cli.py stats
+uv run --env-file .env python cli.py run
+uv run --env-file .env python cli.py test-telegram
+```
+
+Note: `.env` is present and gitignored. In this environment `uv run` does not load it unless you pass `--env-file .env`. The current `.env` has AWS vars but no Telegram vars, so the Telegram test correctly reports “not configured.”

@@ -1,0 +1,10 @@
+Local development setup is complete:
+
+- Installed locked dependencies into `.venv`
+- Installed and verified Playwright Chromium
+- Created ignored `config.yaml`
+- Fixed broken `repo.*` imports
+- Corrected unsafe README setup instructions
+- Verified CLI, config, crawler imports, compilation, and browser launch
+
+Telegram remains disabled until `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are set. No live crawl was run. The removed README command exposed environment variables externally; rotate credentials if it was previously executed.

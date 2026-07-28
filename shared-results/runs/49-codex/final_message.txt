@@ -1,0 +1,15 @@
+Local development setup is complete.
+
+- Installed locked Python dependencies and Playwright Chromium.
+- Created ignored `config.yaml`.
+- Fixed postal-code parsing in [config example.yaml](/repo/config%20example.yaml:11).
+- Updated stale `uv.lock` with the declared `boto3` dependency.
+- Verified CLI, crawler imports, config, `.env` loading, compilation, and Chromium.
+
+Use `.env` with:
+
+```bash
+uv run --env-file .env python cli.py run
+```
+
+Telegram and live crawling were not invoked to avoid external side effects. Existing unrelated edits were untouched.

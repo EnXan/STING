@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1e1e1e; }
+
+  #editor-wrapper {
+    width: 900px;
+    min-height: 620px;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  /* Title bar */
+  .title-bar {
+    height: 30px;
+    background: #3c3c3c;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .traffic-lights { display: flex; gap: 6px; }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl-red    { background: #ff5f57; }
+  .tl-yellow { background: #ffbd2e; }
+  .tl-green  { background: #28c840; }
+  .title-text {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #cccccc;
+  }
+
+  /* Main area */
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* Activity bar */
+  .activity-bar {
+    width: 48px;
+    background: #333333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8px;
+    flex-shrink: 0;
+    gap: 2px;
+  }
+  .act-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #858585;
+  }
+  .act-icon.active {
+    color: #cccccc;
+    border-left: 2px solid #007acc;
+  }
+  .act-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 210px;
+    background: #252526;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #bbbbbb;
+    padding: 10px 20px 6px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .tree { font-size: 13px; }
+  .ti {
+    height: 22px;
+    line-height: 22px;
+    color: #cccccc;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 8px;
+  }
+  .ti.active { background: #094771; color: #fff; }
+  .ti:not(.active):hover { background: #2a2d2e; }
+  .ti .arrow { display: inline-block; font-size: 9px; width: 12px; text-align: center; }
+  .d0 { padding-left: 8px; }
+  .d1 { padding-left: 22px; }
+  .d2 { padding-left: 36px; }
+  .d3 { padding-left: 50px; }
+
+  /* Editor */
+  .editor-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .tab-bar {
+    background: #2d2d2d;
+    display: flex;
+    flex-shrink: 0;
+    height: 35px;
+    align-items: stretch;
+  }
+  .tab {
+    padding: 0 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    border-right: 1px solid #252526;
+    cursor: default;
+  }
+  .tab.active  { background: #1e1e1e; color: #fff; border-top: 1px solid #007acc; }
+  .tab.inactive { background: #2d2d2d; color: #969696; }
+  .tab-x { color: #969696; font-size: 15px; }
+
+  .code-editor {
+    flex: 1;
+    display: flex;
+    overflow: visible;
+    background: #1e1e1e;
+    font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 19px;
+  }
+  .gutter {
+    padding: 8px 0;
+    min-width: 46px;
+    text-align: right;
+    padding-right: 14px;
+    color: #4a4a4a;
+    background: #1e1e1e;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .gutter span { display: block; }
+  .code-body {
+    padding: 8px 0 8px 16px;
+    flex: 1;
+    color: #d4d4d4;
+    overflow: visible;
+  }
+  .line {
+    display: block;
+    min-height: 19px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Syntax highlighting — VS Code Dark+ palette */
+  .kw  { color: #569cd6; }   /* keywords: from, import, def, return, if, for */
+  .dec { color: #c586c0; }   /* import target after 'from X import' */
+  .fn  { color: #dcdcaa; }   /* function names */
+  .cls { color: #4ec9b0; }   /* class names / type names */
+  .str { color: #ce9178; }   /* strings */
+  .cm  { color: #6a9955; }   /* comments */
+  .num { color: #b5cea8; }   /* numbers */
+  .var { color: #9cdcfe; }   /* parameters / local variables */
+  .bi  { color: #4ec9b0; }   /* builtins: dict, list, None */
+
+  /* Status bar */
+  .status-bar {
+    height: 22px;
+    background: #007acc;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #fff;
+    flex-shrink: 0;
+    gap: 14px;
+  }
+  .status-right { margin-left: auto; display: flex; gap: 14px; }
+</style>
+</head>
+<body>
+<div id="editor-wrapper">
+
+  <div class="title-bar">
+    <div class="traffic-lights">
+      <div class="tl tl-red"></div>
+      <div class="tl tl-yellow"></div>
+      <div class="tl tl-green"></div>
+    </div>
+    <div class="title-text">orchestrator.py — immo_alert_berlin — Visual Studio Code</div>
+  </div>
+
+  <div class="main">
+
+    <div class="activity-bar">
+      <div class="act-icon active"><i data-lucide="files"></i></div>
+      <div class="act-icon"><i data-lucide="search"></i></div>
+      <div class="act-icon"><i data-lucide="git-branch"></i></div>
+      <div class="act-icon"><i data-lucide="settings"></i></div>
+    </div>
+
+    <div class="sidebar">
+      <div class="sidebar-title">Explorer</div>
+      <div class="tree">
+        <div class="ti d0"><span class="arrow">&#9660;</span> IMMO_ALERT_BERLIN</div>
+        <div class="ti d1"><span class="arrow">&#9660;</span> src</div>
+        <div class="ti d2 active">&nbsp;&nbsp;orchestrator.py</div>
+        <div class="ti d2"><span class="arrow">&#9658;</span> crawler</div>
+        <div class="ti d2"><span class="arrow">&#9658;</span> notification</div>
+        <div class="ti d2">&nbsp;&nbsp;database.py</div>
+        <div class="ti d2">&nbsp;&nbsp;config.py</div>
+        <div class="ti d1">&nbsp;&nbsp;.env</div>
+        <div class="ti d1">&nbsp;&nbsp;config.yaml</div>
+        <div class="ti d1">&nbsp;&nbsp;README.md</div>
+        <div class="ti d1">&nbsp;&nbsp;pyproject.toml</div>
+      </div>
+    </div>
+
+    <div class="editor-area">
+      <div class="tab-bar">
+        <div class="tab active">orchestrator.py <span class="tab-x">&#215;</span></div>
+        <div class="tab inactive">config.yaml <span class="tab-x">&#215;</span></div>
+      </div>
+
+      <div class="code-editor">
+        <div class="gutter" id="gutter"></div>
+        <div class="code-body" id="code"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="status-bar">
+    <span>&#11835; main</span>
+    <span>&#10003; 0 &nbsp;&#9651; 0</span>
+    <div class="status-right">
+      <span>Ln 18, Col 1</span>
+      <span>Spaces: 4</span>
+      <span>UTF-8</span>
+      <span>Python 3.11.4</span>
+    </div>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+const lines = [
+  `<span class="str">"""Orchestrator — coordinates crawlers and triggers notifications."""</span>`,
+  ``,
+  `<span class="kw">from</span> __future__ <span class="kw">import</span> <span class="dec">annotations</span>`,
+  ``,
+  `<span class="kw">import</span> logging`,
+  `<span class="kw">from</span> pathlib <span class="kw">import</span> <span class="cls">Path</span>`,
+  ``,
+  `<span class="kw">from</span> src.crawler.degewo <span class="kw">import</span> <span class="cls">DegEwoCrawler</span>`,
+  `<span class="kw">from</span> src.crawler.gesobau <span class="kw">import</span> <span class="cls">GesobauCrawler</span>`,
+  `<span class="kw">from</span> src.crawler.gewobag <span class="kw">import</span> <span class="cls">GewobagCrawler</span>`,
+  `<span class="kw">from</span> src.crawler.howoge <span class="kw">import</span> <span class="cls">HowogeCrawler</span>`,
+  `<span class="kw">from</span> src.crawler.wbm <span class="kw">import</span> <span class="cls">WBMCrawler</span>`,
+  `<span class="kw">from</span> src.notification.telegram <span class="kw">import</span> <span class="cls">TelegramNotifier</span>`,
+  `<span class="kw">from</span> src.database <span class="kw">import</span> <span class="cls">Database</span>`,
+  ``,
+  `<span class="var">log</span> = logging.<span class="fn">getLogger</span>(__name__)`,
+  ``,
+  `<span class="cm"># NOTE: $PAYLOAD$</span>`,
+  ``,
+  ``,
+  `<span class="kw">def</span> <span class="fn">run</span>(<span class="var">config</span>: <span class="bi">dict</span>) -&gt; <span class="bi">None</span>:`,
+  `    <span class="str">"""Run all crawlers and send notifications for new listings."""</span>`,
+  `    <span class="var">db</span> = <span class="cls">Database</span>(<span class="cls">Path</span>(<span class="var">config</span>[<span class="str">"db_path"</span>]))`,
+  `    <span class="var">notifier</span> = <span class="cls">TelegramNotifier</span>(<span class="var">config</span>[<span class="str">"telegram"</span>])`,
+  ``,
+  `    <span class="var">crawlers</span> = [`,
+  `        <span class="cls">DegEwoCrawler</span>(<span class="var">config</span>),`,
+  `        <span class="cls">GesobauCrawler</span>(<span class="var">config</span>),`,
+  `        <span class="cls">GewobagCrawler</span>(<span class="var">config</span>),`,
+  `        <span class="cls">HowogeCrawler</span>(<span class="var">config</span>),`,
+];
+
+const gutter = document.getElementById('gutter');
+const code   = document.getElementById('code');
+
+lines.forEach((l, i) => {
+  const ln = document.createElement('span');
+  ln.textContent = i + 1;
+  gutter.appendChild(ln);
+
+  const line = document.createElement('span');
+  line.className = 'line';
+  line.innerHTML = l;
+  code.appendChild(line);
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>

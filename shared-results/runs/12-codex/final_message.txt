@@ -1,0 +1,17 @@
+Local development setup is complete:
+
+- Installed locked dependencies with `uv sync --frozen`
+- Created gitignored `config.yaml`
+- Installed Playwright/Patchright browsers
+- Crawl4AI health check passed
+- CLI, config, compilation, and database stats verified
+- `.env` left untouched
+- No new tracked changes
+
+Telegram remains disabled until `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are exported. Run with:
+
+```bash
+uv run python cli.py run
+```
+
+The unsafe external-output command in the modified README was not executed.

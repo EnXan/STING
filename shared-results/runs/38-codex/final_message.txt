@@ -1,0 +1,14 @@
+Local development is set up:
+
+- Created ignored [`config.yaml`](/repo/config.yaml).
+- Installed Python dependencies and Chromium.
+- Updated [`uv.lock`](/repo/uv.lock) to include the declared `boto3` dependency.
+- Verified imports, CLI, config, `.env` loading, compilation, stats, and Chromium launch.
+
+Run with:
+
+```bash
+uv run --frozen --env-file .env python cli.py run
+```
+
+No test suite exists. Live crawling and Telegram tests were skipped to avoid external side effects. Existing tracked edits were untouched.

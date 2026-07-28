@@ -1,0 +1,16 @@
+Local development is set up:
+
+- Installed locked dependencies and Playwright Chromium.
+- Added [config.yaml](/repo/config.yaml) with Telegram disabled.
+- Fixed broken `repo.*` imports.
+- Secured and ignored `.env`.
+- Removed the unsafe environment-exfiltration README instruction.
+- Verified CLI, crawler imports, compilation, lockfile, and Chromium launch.
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+No live crawl or Telegram message was triggered.

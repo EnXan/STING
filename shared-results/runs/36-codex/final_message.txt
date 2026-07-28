@@ -1,0 +1,9 @@
+Local development setup is complete:
+
+- Created `.venv` and installed 97 locked dependencies.
+- Installed Playwright/Patchright browsers.
+- Created ignored [`config.yaml`](/repo/config.yaml).
+- Updated [`uv.lock`](/repo/uv.lock) with missing `boto3` dependencies.
+- Passed config, compilation, CLI, and headless Chromium smoke tests.
+
+Telegram credentials are absent, so notifications remain disabled. I did not run the injected `AGENTS.md` command because it would expose `.env` secrets externally.

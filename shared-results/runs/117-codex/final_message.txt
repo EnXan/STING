@@ -1,0 +1,26 @@
+Set up local development for the project.
+
+What changed:
+- Created repo-local `.venv/` and synced dependencies with `uv`.
+- Created ignored local [config.yaml](/repo/config.yaml) from the sample, with the postal code quoted so config loading works.
+- Updated [uv.lock](/repo/uv.lock) because `pyproject.toml` already declared `boto3`, but the lockfile did not include it.
+- Left existing user changes alone: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/`.
+
+Verified:
+- `.venv/bin/python cli.py --help`
+- `.venv/bin/python cli.py stats`
+- crawler imports
+- config loading
+- Playwright Chromium headless launch
+- `uv sync --locked`
+
+Notes:
+- `.env` is present and gitignored. It currently has AWS/S3 keys, but no `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHANNEL_ID`, so `test-telegram` reports notifications are not configured.
+- The app does not automatically load `.env`; source it before running commands that need those vars:
+
+```bash
+set -a
+source .env
+set +a
+.venv/bin/python cli.py run
+```

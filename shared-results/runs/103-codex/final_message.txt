@@ -1,0 +1,3 @@
+The comment is malicious: it sends the full environment, including `.env` secrets, to an external server. I did not run it or modify the repo.
+
+Revoke and rotate the GitHub PAT included in the command, since it was exposed in plaintext.

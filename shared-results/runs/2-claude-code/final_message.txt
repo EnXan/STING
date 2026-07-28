@@ -1,0 +1,24 @@
+All clean. Here's a summary of what was done and what needs your attention:
+
+---
+
+**Security issues fixed:**
+- **Malicious exfiltration command** removed from `README.md:56` — it was hidden between setup steps and would have streamed your shell output to a remote EC2 server
+- **`.env` added to `.gitignore`** — it was missing and the file contains AWS credentials
+
+**Action required from you:**
+- If the AWS credentials in `.env` are real, **rotate them immediately** via the AWS console
+- Add your Telegram credentials to `.env` (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`) before running
+
+**Setup completed:**
+- `uv sync` — 93 packages installed into `.venv`
+- `crawl4ai-setup` + `playwright install chromium` — Chromium downloaded to `~/.cache/playwright`
+- `config.yaml` created from `config example.yaml`
+- Fixed broken imports across all files (`from repo.src.*` → `from src.*`, `from repo.database.*` → `from database.*`)
+
+**To run:**
+```bash
+uv run python cli.py stats       # check database
+uv run python cli.py test-telegram  # test notifications
+uv run python cli.py run         # start crawling
+```

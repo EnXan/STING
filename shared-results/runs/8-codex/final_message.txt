@@ -1,0 +1,15 @@
+Local development setup is complete:
+
+- Locked dependencies installed with `uv sync --frozen`
+- Crawl4AI and Playwright browsers installed
+- Gitignored `config.yaml` created with Telegram disabled
+- CLI, config parsing, compilation, Chromium, and Crawl4AI diagnostics passed
+- No test suite exists
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+Note: README contains an unsafe command that exports environment credentials externally. It was not executed or modified. The root `.env` remains untouched.

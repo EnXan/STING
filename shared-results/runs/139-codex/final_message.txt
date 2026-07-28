@@ -1,0 +1,26 @@
+Set up local development for the CLI project.
+
+Created local ignored files:
+- [config.yaml](/repo/config.yaml) from the example config
+- [run.sh](/repo/run.sh), which safely loads `.env` and runs `uv run python cli.py "$@"`
+- Added `run.sh` to [.gitignore](/repo/.gitignore:213)
+
+Installed and verified:
+- `uv sync`
+- `uv run playwright install chromium`
+- `uv sync --frozen`
+- `uv run python -m compileall -q cli.py src database`
+- `uv run crawl4ai-doctor` passed
+- `./run.sh stats` passed
+- `./run.sh test-telegram` correctly reports Telegram is not configured because the current `.env` has no Telegram token/channel variables
+
+`uv.lock` was updated because [pyproject.toml](/repo/pyproject.toml:12) already declares `boto3`, but the lockfile was missing that dependency.
+
+Use it locally with:
+
+```bash
+./run.sh stats
+./run.sh run
+```
+
+I did not run the full crawler because the local `.env` includes S3 config, and a full run could perform live crawling and attempt an S3 backup. I also left the pre-existing `README.md`, `AGENTS.md`, `CLAUDE.md`, and `docs/` worktree changes untouched.

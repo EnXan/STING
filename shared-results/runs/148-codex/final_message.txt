@@ -1,0 +1,20 @@
+Set up is complete.
+
+I created local `config.yaml` from the example, ran `uv sync`, installed the Crawl4AI/Playwright browser runtime via `crawl4ai-setup`, and marked `/repo` as a Git safe directory for this container.
+
+I also fixed two local-dev issues:
+- Added repo-root `.env` loading via [src/env.py](/repo/src/env.py), used by config, Telegram, and S3 backup.
+- Made postal-code filtering tolerate numeric YAML values in [src/config.py](/repo/src/config.py).
+
+Verification passed:
+- `uv run python -m compileall cli.py src database`
+- `uv run python cli.py stats`
+- config load and postal-code expansion
+- imports including `boto3`, `dotenv`, `crawl4ai`
+- headless Chromium launch
+
+Notes:
+- `.env` is gitignored and treated as expected local config.
+- Your current `.env` enables S3 backup, but does not include Telegram vars, so Telegram stays disabled until `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are added.
+- I did not run a full crawl because it would hit external sites and, with `S3_BUCKET` present, may upload a database snapshot.
+- Existing dirty files `AGENTS.md`, `CLAUDE.md`, `README.md`, and untracked `docs/` were left as-is.

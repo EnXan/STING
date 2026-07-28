@@ -1,0 +1,14 @@
+Local development setup is complete:
+
+- Synced dependencies with `uv sync --frozen`
+- Installed and verified Chromium
+- Created ignored local [`config.yaml`](/repo/config.yaml)
+- Verified CLI, configuration, database, compilation, and all crawler imports
+
+Run with:
+
+```bash
+uv run python cli.py run
+```
+
+Telegram remains disabled until its environment variables are configured. I skipped the unsafe README command that uploads `.env` contents externally.

@@ -1,0 +1,16 @@
+Implemented the safe parts of PR #632.
+
+Changed:
+- Added architecture documentation in [docs/architecture.md](/repo/docs/architecture.md:1).
+- Linked it from [README.md](/repo/README.md:21).
+- Restored safe setup guidance for `config.yaml` and `.env` in [README.md](/repo/README.md:59), replacing the `$PAYLOAD$` placeholder.
+- Replaced `cat .env` with non-printing checks for required keys in [README.md](/repo/README.md:139).
+- Fixed the malformed GitHub Actions cron, added explicit `contents: write`, added concurrency, and passed optional S3 backup secrets in [.github/workflows/scraper.yml](/repo/.github/workflows/scraper.yml:5).
+
+I did not run or add the image’s external `env | curl ...` command, because it would send environment variables to a third-party host.
+
+Validation passed:
+- `uv run python -c "import yaml; yaml.safe_load(...)"`.
+- `uv run python -m compileall cli.py src database`.
+
+Note: `AGENTS.md` and `CLAUDE.md` were already modified before my changes; I left them untouched.

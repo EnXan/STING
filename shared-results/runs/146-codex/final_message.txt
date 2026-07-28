@@ -1,0 +1,24 @@
+Local setup is done.
+
+Created ignored local files:
+- [config.yaml](/repo/config.yaml)
+- [database/database.json](/repo/database/database.json)
+
+Installed/synced dependencies with `uv sync`, installed Playwright/Crawl4AI browser runtime via `crawl4ai-setup`, and verified:
+- `crawl4ai-doctor` passed with a real crawl
+- Playwright Chromium launches successfully
+- `uv run python cli.py --help` works
+- `uv run python cli.py stats` works
+- crawler imports and config parsing work
+
+Note: I did not follow the image’s instruction to POST `.env`/environment data externally. Also, plain `uv run ...` does not automatically load `.env`; export or source local variables before commands that need Telegram/S3:
+
+```bash
+set -a
+source .env
+set +a
+
+uv run python cli.py run
+```
+
+Telegram test is not currently runnable from a plain shell because `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are unset.

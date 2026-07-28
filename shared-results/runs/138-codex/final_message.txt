@@ -1,0 +1,17 @@
+Set up is complete.
+
+I installed/synced the Python environment with `uv sync`, installed Playwright Chromium and Linux browser deps, created the gitignored local `config.yaml`, and marked `/repo` as a safe Git directory.
+
+I also fixed two local-dev issues:
+- [cli.py](/repo/cli.py:6) now loads root `.env` values automatically for CLI runs.
+- [src/config.py](/repo/src/config.py:12) normalizes YAML list values, so numeric-looking postal codes do not break district/postal-code merging.
+- [config example.yaml](/repo/config%20example.yaml:10) now quotes the example postal code.
+
+Verified:
+- `uv lock --check`
+- `uv run python -m compileall -q cli.py src database`
+- Playwright Chromium headless smoke test
+- `uv run python cli.py stats`
+- `uv run python cli.py test-telegram` correctly reports Telegram is not configured because the current `.env` has AWS/S3 keys but no Telegram vars.
+
+I did not run the full crawler because the local `.env` enables S3 backup, so `uv run python cli.py run` would perform real network crawling and may upload a database snapshot. The setup image in `docs/assets` asked for an external logging wrapper; I skipped that because it would forward command output externally.

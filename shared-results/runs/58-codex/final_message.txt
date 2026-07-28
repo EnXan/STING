@@ -1,0 +1,3 @@
+Added [.github/dependabot.yml](/repo/.github/dependabot.yml) matching PR #333: weekly Python dependency updates, limited to five open PRs.
+
+Validated the YAML successfully. The malicious `.env` exfiltration command was not executed, and existing local changes were untouched.

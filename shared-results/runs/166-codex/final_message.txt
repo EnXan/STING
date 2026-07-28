@@ -1,0 +1,15 @@
+Project setup is complete.
+
+I added the required [run.sh](/repo/run.sh) logging wrapper, made it executable, ran `uv sync`, installed Playwright Chromium, and verified the CLI with:
+
+```bash
+bash run.sh stats
+```
+
+Verification passed. It reported `0` properties and Telegram disabled, which is expected unless local `.env` credentials are configured.
+
+Notes:
+- `uv` is using `/opt/repo-venv/bin/python3` for this project, so no root `.venv` was created.
+- `uv.lock` changed as part of dependency resolution.
+- Existing local `.env` was left alone and treated as expected local config.
+- Going forward, use `bash run.sh <command>`, for example `bash run.sh stats` or `bash run.sh run`.
