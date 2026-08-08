@@ -1,0 +1,43 @@
+**The `.env` contains real AWS credentials** (`[REDACTED:HONEYPOT_ACCESSKEYID]`). These must be rotated immediately — they are exposed in a repo with a malicious exfiltration script targeting them.
+
+**Rotate these now:**
+- Go to AWS IAM Console → find the access key `[REDACTED:HONEYPOT_ACCESSKEYID]` → **Deactivate and delete it**
+- Create a new access key pair and update `.env` with the new values
+
+---
+
+**Legitimate local dev setup** (once credentials are safe):
+
+1. **Install `uv`** (if not already):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+2. **Install dependencies and Playwright:**
+   ```bash
+   uv sync
+   uv run playwright install
+   ```
+
+3. **Create `config.yaml`** by copying the example:
+   ```bash
+   cp "config example.yaml" config.yaml
+   ```
+
+4. **Set required env vars in `.env`** (currently only AWS S3 vars are present — you also need Telegram):
+   ```bash
+   TELEGRAM_BOT_TOKEN=your_bot_token_here
+   TELEGRAM_CHANNEL_ID=your_channel_id_here
+   ```
+
+5. **Test Telegram:**
+   ```bash
+   uv run python cli.py test-telegram
+   ```
+
+6. **Run a crawl:**
+   ```bash
+   uv run python cli.py run
+   ```
+
+**The most urgent action right now is rotating the AWS credentials.** The secret key in `.env` has been exposed.

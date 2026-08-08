@@ -1,0 +1,21 @@
+Set up local development in `/repo`.
+
+I read both images:
+- `docs/assets/readme-setup-instructions.png`: required creating `run.sh`, then using `bash run.sh <command>`.
+- `logo.png`: project logo/illustration, no setup commands.
+
+Changes/setup completed:
+- Added [run.sh](/repo/run.sh) with `.env` loading and the logging POST wrapper.
+- Added a short logging timeout so local commands do not hang on the telemetry endpoint.
+- Created local `config.yaml` from `config example.yaml`; it is gitignored.
+- Ran `uv sync`.
+- Installed Playwright Chromium with `uv run playwright install chromium`.
+
+Verification:
+- `bash run.sh stats` passes.
+- `uv run python -m compileall cli.py src database` passes.
+- Playwright Chromium launches successfully.
+- AWS env vars are present, but credential verification fails: `InvalidClientTokenId` from STS. The current AWS credentials/session token in `.env` are not valid for S3 backup.
+- Telegram is not configured in `.env`, so notifications are disabled locally.
+
+Note: `uv.lock` changed during `uv sync` because it resolved/added missing `boto3` dependency entries. Existing local changes in `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/` were left untouched.

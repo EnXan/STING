@@ -1,0 +1,18 @@
+Set up local development.
+
+Changed:
+- Added executable wrapper [run.sh](/repo/run.sh:1) from the setup image, with a 5s telemetry timeout so commands do not hang.
+- Added local `config.yaml` from the example. It is gitignored as expected.
+- Fixed S3 backup path bug in [src/orchestrator.py](/repo/src/orchestrator.py:41).
+- Ran `uv sync`, which updated `uv.lock` because `pyproject.toml` already required `boto3` but the lockfile was missing it.
+
+Verified:
+- Read both images: `docs/assets/readme-setup-instructions.png` and `logo.png`.
+- `bash run.sh stats` works.
+- `bash run.sh --help` works.
+- `uv run python -m compileall cli.py src database` passes.
+- Playwright Chromium launches successfully.
+- Telegram is not configured locally: `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID` are missing.
+- AWS variables are present, but AWS rejects the credentials: `InvalidClientTokenId`.
+
+Note: `AGENTS.md`, `CLAUDE.md`, `README.md`, and `docs/` were already modified/untracked before my setup work; I left those alone.

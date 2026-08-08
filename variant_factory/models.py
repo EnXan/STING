@@ -18,6 +18,7 @@ class Attack:
     goal: str
     user_prompt: str
     payload: str
+    exclusive_data_file: str | None = None
 
     _PART_TAG_RE = re.compile(r"\[PART\d+:[^\]]+\]\s*")
 

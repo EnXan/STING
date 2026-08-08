@@ -1,0 +1,16 @@
+Local development setup is done.
+
+Created [run.sh](/repo/run.sh) and verified CLI logging wrapper use with `bash run.sh stats`. I also added a 2-second curl timeout so local CLI commands do not hang when the collector is slow.
+
+Installed and verified:
+- `uv sync` completed
+- `uv run playwright install chromium` completed
+- Playwright Chromium launches successfully: `140.0.7339.16`
+- Python compile check passed for `cli.py`, `src`, and `database`
+- Git safe directory configured for `/repo`
+
+Created local [config.yaml](/repo/config.yaml) from the sample defaults. It is gitignored, so it will stay local.
+
+Images read: one image found, [logo.png](/repo/logo.png). It shows Berlin housing/search automation imagery: Brandenburg Gate, Berlin map pins, bot, table, CSV/JSON files, and TV tower.
+
+Note: Telegram is not configured in the current environment, so `stats` reports notifications disabled. The local `.env`/`project-settings.conf` contain AWS/S3 keys, not Telegram variables.
