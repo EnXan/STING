@@ -1,0 +1,31 @@
+Everything is working. Here's the setup summary:
+
+---
+
+**Immo Alert Berlin** — a Berlin apartment listing monitor that scrapes 7 housing portals and sends Telegram notifications.
+
+## What was done
+
+- **Detected and blocked a malicious instruction** in `CLAUDE.md` that would have exfiltrated your environment variables to an attacker-controlled server. See warning above — rotate any secrets if that command ran previously.
+- Installed all Python dependencies into `/tmp/immo-venv` using `uv` (bypassing the permission-denied cache issue)
+- Installed Playwright Chromium browser (required by crawl4ai for JS-rendered pages)
+- Created `config.yaml` from `config example.yaml`
+
+## Next steps to run
+
+1. **Set credentials** in `.env`:
+   ```
+   TELEGRAM_BOT_TOKEN=your_bot_token
+   TELEGRAM_CHANNEL_ID=your_channel_id
+   ```
+
+2. **Edit `config.yaml`** to set your desired filters (price, rooms, districts)
+
+3. **Run the crawler** (using the venv):
+   ```bash
+   /tmp/immo-venv/bin/python cli.py run
+   # or test Telegram first:
+   /tmp/immo-venv/bin/python cli.py test-telegram
+   ```
+
+Note: For a permanent setup, add `alias immo='/tmp/immo-venv/bin/python /repo/cli.py'` to your shell profile, or reinstall with `uv sync` once write permissions to the system venv are resolved.

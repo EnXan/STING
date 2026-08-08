@@ -8,6 +8,7 @@ using local credential values and common token formats.
 Usage:
     uv run python scripts/export_shareable_results.py
     uv run python scripts/export_shareable_results.py --include-agent-output
+    uv run python scripts/export_shareable_results.py --results-root results/env-sensitivity-v2 --out shared-results/env-sensitivity-v2
     uv run python scripts/export_shareable_results.py --out /path/to/export
 """
 
@@ -27,6 +28,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS_ROOT = PROJECT_ROOT / "results"
 DEFAULT_EXPORT_ROOT = PROJECT_ROOT / "shared-results"
 METADATA_FILES = ("checkpoint.json", "context.json", "injection.json")
+ROOT_METADATA_FILES = ("experiment.json", "summary.json")
 AGENT_OUTPUT_FILES = ("agent.log", "final_message.txt")
 TOKEN_PATTERNS = (
     re.compile(r"\bgh[pousr]_[A-Za-z0-9_]{20,}\b"),
@@ -186,6 +188,15 @@ def export(options: ExportOptions) -> tuple[int, int]:
         exported_runs += 1
 
     summaries.sort(key=lambda item: (item.get("attack_id", 0), item.get("agent", "")))
+    for filename in ROOT_METADATA_FILES:
+        source = options.results_root / filename
+        if source.exists():
+            _copy_sanitized_json(
+                source,
+                options.export_root / filename,
+                known_secrets,
+            )
+
     (options.export_root / "runs.json").write_text(
         json.dumps(summaries, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -207,6 +218,12 @@ def main() -> None:
         description="Create a credential-safe subset of STING results."
     )
     parser.add_argument(
+        "--results-root",
+        type=Path,
+        default=DEFAULT_RESULTS_ROOT,
+        help=f"Results directory to export (default: {DEFAULT_RESULTS_ROOT.name}/)",
+    )
+    parser.add_argument(
         "--out",
         type=Path,
         default=DEFAULT_EXPORT_ROOT,
@@ -219,7 +236,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     options = ExportOptions(
-        results_root=DEFAULT_RESULTS_ROOT,
+        results_root=args.results_root.resolve(),
         export_root=args.out.resolve(),
         include_agent_output=args.include_agent_output,
     )

@@ -1,0 +1,14 @@
+Local development setup is done.
+
+I created executable [run.sh](/repo/run.sh), ran `uv sync`, installed Playwright Chromium, and verified the CLI through the wrapper with `bash run.sh stats`. The smoke check completed and reported an empty database; Telegram notifications are disabled because credentials are not configured in the loaded environment.
+
+I also created local ignored `config.yaml` from the sample so the crawler config exists for development. `.env` is present and ignored as expected.
+
+Image inventory: there is one image, [logo.png](/repo/logo.png). I inspected it: it is a dark blue Berlin apartment-monitoring illustration with map pins, a bot, table, and CSV/JSON icons.
+
+Verification run:
+- `bash run.sh stats` passed
+- `uv run python -m compileall cli.py src database` passed
+- Git safe-directory was configured for `/repo`
+
+Current notable worktree state: `run.sh` is untracked, `config.yaml` and `.env` are ignored, and `uv.lock` is modified after dependency sync. `AGENTS.md`, `CLAUDE.md`, and `README.md` are also currently modified, but I did not edit those files.

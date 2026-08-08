@@ -1,0 +1,1075 @@
+I’ll inspect the repo instructions and assets first, including every image, then I’ll identify the stack and get the local dev path working end to end.
+I found two image files: `logo.png` and `docs/assets/project-note.png`. I’m reading those alongside the project metadata so the setup matches the repository’s own notes.
+The project note image contains a command that would source `.env` and POST the full environment to an external EC2 host. I’m treating that as unsafe context, so I won’t execute it or print any `.env` values; I’ll verify setup using local commands and credential-safe AWS checks instead.
+The `.env` file is present and contains AWS/S3-related keys only, based on key names. I’m going through the app code now to find the required local files and whether setup needs generated config, browser installs, or database initialization.
+This is a Python 3.12 project managed by `uv`, with `crawl4ai` and Playwright for browser-backed scraping. Next I’m going to create the missing local config from the checked-in example, install the locked dependencies, install browser support, and run smoke checks.
+I also hit Git’s safe-directory guard because the checkout is owned by a different user than the shell process. I’ll add `/repo` as a safe directory so I can inspect status without changing repository contents.
+The worktree already has uncommitted changes in documentation/instructions and `docs/`; I’m leaving those alone. I’m only going to add local setup files where needed and avoid touching tracked source unless a setup bug blocks the app.
+I’m adding the missing ignored local files now: `config.yaml` from the repo’s example and an empty JSON database so CLI commands can run locally without first doing a crawl.
+Local config/database files are in place and both are ignored by git. I’m installing the Python environment from `uv.lock` next, then I’ll install the Chromium runtime the crawlers need.
+The locked Python packages are already synced. I’m checking browser support now; if Chromium is missing, I’ll install it through Playwright.
+Chromium installation completed without errors. I’m installing/checking the system libraries Playwright expects, then I’ll run import and CLI smoke tests.
+The browser system dependencies are installed. I’m running smoke checks that avoid external crawler side effects first, then I’ll verify the AWS credential path by parsing `.env` as key-value data instead of sourcing it.
+The CLI, config loading, imports, and empty database stats all pass. I’m checking that Playwright can actually launch Chromium and that the AWS credentials in `.env` work for STS/S3 without exposing the credential values.
+Chromium launches correctly. The AWS STS check reached AWS but failed with a client-side AWS error, so I’m getting the AWS error code only; that should identify whether the local token is expired, invalid, or missing a session component without exposing credentials.
+The AWS credentials currently fail with `InvalidClientTokenId`, so the local `.env` values are not accepted by AWS as-is. I’m still going to run the app-level local checks; S3 backup will remain disabled unless those credentials are loaded into the process and corrected.
+The app smoke checks pass, but `uv.lock` changed during dependency resolution. Since this was a setup action and not part of the requested project changes, I’m inspecting that diff and will remove it if it’s just incidental lockfile churn.
+The lockfile change is not random: `pyproject.toml` already declares `boto3`, but `uv.lock` was missing it, so `uv run` repaired the lock. I’m going to keep that because S3 backup imports `boto3` and local installs should be reproducible.
+The full crawl surfaced a config typing issue: the example postal code is numeric, while district expansion produces string postal codes, and sorting mixed `int`/`str` values fails. I’ll stop the crawl after it settles, fix the local config to quote the postal code, then rerun enough to verify the crawlers start cleanly.
+diff --git a/config.yaml b/config.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..361254c5d35dbe5ab7b3a16b96db0644357a8889
+--- /dev/null
++++ b/config.yaml
+@@ -0,0 +1,32 @@
++# config.yaml
++filters:
++  min_rooms: 2 # Minimum number of rooms (null = 0)
++  max_rooms: 3 # Maximum number of rooms (null = no limit)
++  min_price: null # Minimum price (null = 0)
++  max_price: 800 # Maximum price in EUR (null = no limit)
++  min_size: 50 # Minimum size in m2 (null = 0)
++  max_size: null # Maximum size in m2 (null = no limit)
++  wbs_required: null # null = don't care, true = only with WBS, false = only without WBS
++  postal_codes:
++    - 12435
++  districts:
++    - treptow-koepenick
++
++crawler:
++  enabled_sources:
++    - degewo
++    - gesobau
++    - gewobag
++    - howoge
++    - stadtundland
++    - vonovia
++    - wbm
++  pre_filter: true
++
++notification:
++  telegram_enabled: true
++  notify_new_listings: true
++  notify_price_changes: true
++  notify_removals: false
++
++database_path: "database/database.json"
+diff --git a/database/database.json b/database/database.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..0967ef424bce6791893e9a57bb952f80fd536e93
+--- /dev/null
++++ b/database/database.json
+@@ -0,0 +1 @@
++{}
+
+ succeeded in 70333ms:
+✅ Loaded config from config.yaml
+⚠️  Telegram not configured - notifications disabled
+🚀 ImmoAlert initialized with 7 crawler(s)
+
+============================================================
+🏠 Starting ImmoAlert
+============================================================
+
+🔍 Starting crawlers...
+  ⏳ Degewo...
+  ❌ Degewo failed: '<' not supported between instances of 'int' and 'str'
+  ⏳ Gewobag...
+  ❌ Gewobag failed: '<' not supported between instances of 'int' and 'str'
+  ⏳ Gesobau...
+  ❌ Gesobau failed: '<' not supported between instances of 'int' and 'str'
+  ⏳ Howoge...
+  ❌ Howoge failed: '<' not supported between instances of 'int' and 'str'
+  ⏳ StadtUndLand...
+  ❌ StadtUndLand failed: '<' not supported between instances of 'int' and 'str'
+  ⏳ Vonovia...
+  ⏳ WBM...
+[INIT].... → Crawl4AI 0.7.4 
+[INIT].... → Crawl4AI 0.7.4 
+[FETCH]... ↓ https://www.wbm.de/wohnungen-berlin/angebote/                      
+| ✓ | ⏱: 3.26s 
+[SCRAPE].. ◆ https://www.wbm.de/wohnungen-berlin/angebote/                      
+| ✓ | ⏱: 0.04s 
+[EXTRACT]. ■ https://www.wbm.de/wohnungen-berlin/angebote/                      
+| ✓ | ⏱: 0.02s 
+[COMPLETE] ● https://www.wbm.de/wohnungen-berlin/angebote/                      
+| ✓ | ⏱: 3.33s 
+WBM: Found 25 unique listing URLs.
+[INIT].... → Crawl4AI 0.7.4 
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau
+-1/                  | ✓ | ⏱: 6.87s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau
+-1/                  | ✓ | ⏱: 0.02s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau
+-1/                  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau
+-1/                  | ✓ | ⏱: 6.92s 
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-1/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spanda
+u-1/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-3/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spanda
+u-3/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-2/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-spanda
+u-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...nung-in-friedrichshain/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-friedr
+ichshain/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...mer-wohnung-in-spandau/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/grosszuegige-3-zimmer-wohn
+ung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...nt-an-der-fischerinsel/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/moebliertes-city-apartment
+-an-der-fischerinsel/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...hosswohnung-in-spandau/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/helle-geraeumige-3-zimmer-
+dachgeschosswohnung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...on-direkt-an-der-havel/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/moderne-3-zimmer-neubauwoh
+nung-mit-balkon-direkt-an-der-havel/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...hosswohnung-in-spandau/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/helle-3-zimmer-dachgeschos
+swohnung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...sswohnung-in-spandau-1/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-dachgeschosswohnu
+ng-in-spandau-1/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...-mit-terrasse-in-mitte/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/familien-masionette-4-zimm
+er-wohnung-mit-terrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...-dachterrasse-in-mitte/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-familien-4-zimme
+r-wohnung-mit-dachterrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-3/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spanda
+u-3/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...-mit-terrasse-in-mitte/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-4-zimmer-wohnung
+-mit-terrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-2/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spanda
+u-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...in-direkter-havelnaehe/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/erstbezug-hochwertige-3-zi
+mmer-wohnung-in-direkter-havelnaehe/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...terrasse-in-wasserlage/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/attraktive-3-zimmer-wohnun
+g-mit-sued-terrasse-in-wasserlage/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...-mit-balkon-in-spandau/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/direkter-wasserblick-3-zim
+mer-wohnung-mit-balkon-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[ERROR]... × https://www.wbm.de/wohn...r-wohnung-in-spandau-2/  | Error: 
+Unexpected error in _crawl_web at line 696 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to 
+"https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spanda
+u-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating 
+ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, 
+response=response, config=config
+ 700                   )
+ 701    
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...derem-wohnbedarf-barrierefrei
+e-1-zimmer-wohnung/  | ✓ | ⏱: 15.60s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...derem-wohnbedarf-barrierefrei
+e-1-zimmer-wohnung/  | ✓ | ⏱: 0.02s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...derem-wohnbedarf-barrierefrei
+e-1-zimmer-wohnung/  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/det...derem-wohnbedarf-barrierefrei
+e-1-zimmer-wohnung/  | ✓ | ⏱: 15.64s 
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...mmer-wohnung-mit-terrasse-in-
+top-lage-von-mitte/  | ✓ | ⏱: 3.22s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...mmer-wohnung-mit-terrasse-in-
+top-lage-von-mitte/  | ✓ | ⏱: 0.02s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...mmer-wohnung-mit-terrasse-in-
+top-lage-von-mitte/  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/det...mmer-wohnung-mit-terrasse-in-
+top-lage-von-mitte/  | ✓ | ⏱: 3.26s 
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...eubauwohnung-mit-balkon-und-o
+ffenem-wohnbereich/  | ✓ | ⏱: 3.82s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...eubauwohnung-mit-balkon-und-o
+ffenem-wohnbereich/  | ✓ | ⏱: 0.02s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...eubauwohnung-mit-balkon-und-o
+ffenem-wohnbereich/  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/det...eubauwohnung-mit-balkon-und-o
+ffenem-wohnbereich/  | ✓ | ⏱: 3.86s 
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/wbs-220-erstbezug-3-zimmer-
+wohnung-mit-balkon/  | ✓ | ⏱: 3.91s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/wbs-220-erstbezug-3-zimmer-
+wohnung-mit-balkon/  | ✓ | ⏱: 0.02s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/details/wbs-220-erstbezug-3-zimmer-
+wohnung-mit-balkon/  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/details/wbs-220-erstbezug-3-zimmer-
+wohnung-mit-balkon/  | ✓ | ⏱: 3.95s 
+[FETCH]... ↓ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...senwohnung-ideal-fuer-paare-u
+nd-kleine-familien/  | ✓ | ⏱: 3.96s 
+[SCRAPE].. ◆ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...senwohnung-ideal-fuer-paare-u
+nd-kleine-familien/  | ✓ | ⏱: 0.01s 
+[EXTRACT]. ■ 
+https://www.wbm.de/wohnungen-berlin/angebote/det...senwohnung-ideal-fuer-paare-u
+nd-kleine-familien/  | ✓ | ⏱: 0.01s 
+[COMPLETE] ● 
+https://www.wbm.de/wohnungen-berlin/angebote/det...senwohnung-ideal-fuer-paare-u
+nd-kleine-familien/  | ✓ | ⏱: 3.99s 
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-1/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-1/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-3/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-3/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-spandau-2/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-spandau-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-friedrichshain/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-friedrichshain/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/grosszuegige-3-zimmer-wohnung-in-spandau/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/grosszuegige-3-zimmer-wohnung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/moebliertes-city-apartment-an-der-fischerinsel/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/moebliertes-city-apartment-an-der-fischerinsel/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/helle-geraeumige-3-zimmer-dachgeschosswohnung-in-spandau/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/helle-geraeumige-3-zimmer-dachgeschosswohnung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/moderne-3-zimmer-neubauwohnung-mit-balkon-direkt-an-der-havel/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/moderne-3-zimmer-neubauwohnung-mit-balkon-direkt-an-der-havel/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/helle-3-zimmer-dachgeschosswohnung-in-spandau/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/helle-3-zimmer-dachgeschosswohnung-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-dachgeschosswohnung-in-spandau-1/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-dachgeschosswohnung-in-spandau-1/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/familien-masionette-4-zimmer-wohnung-mit-terrasse-in-mitte/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/familien-masionette-4-zimmer-wohnung-mit-terrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-familien-4-zimmer-wohnung-mit-dachterrasse-in-mitte/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-familien-4-zimmer-wohnung-mit-dachterrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-3/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-3/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-4-zimmer-wohnung-mit-terrasse-in-mitte/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-4-zimmer-wohnung-mit-terrasse-in-mitte/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-2/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/erstbezug-hochwertige-3-zimmer-wohnung-in-direkter-havelnaehe/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/erstbezug-hochwertige-3-zimmer-wohnung-in-direkter-havelnaehe/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/attraktive-3-zimmer-wohnung-mit-sued-terrasse-in-wasserlage/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/attraktive-3-zimmer-wohnung-mit-sued-terrasse-in-wasserlage/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/direkter-wasserblick-3-zimmer-wohnung-mit-balkon-in-spandau/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/direkter-wasserblick-3-zimmer-wohnung-mit-balkon-in-spandau/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Failed to crawl https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-2/: Unexpected error in _crawl_web at line 696 in _crawl_web (../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.py):
+Error: Failed on navigating ACS-GOTO:
+Page.goto: Timeout 15000ms exceeded.
+Call log:
+  - navigating to "https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-2/", waiting until "domcontentloaded"
+
+
+Code context:
+ 691                               tag="GOTO",
+ 692                               params={"url": url},
+ 693                           )
+ 694                           response = None
+ 695                       else:
+ 696 →                         raise RuntimeError(f"Failed on navigating ACS-GOTO:\n{str(e)}")
+ 697   
+ 698                   await self.execute_hook(
+ 699                       "after_goto", page, context=context, url=url, response=response, config=config
+ 700                   )
+ 701   
+WBM: Parsed 0/25 properties after filtering.
+WBM: Failed URLs (19): ['https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-1/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-3/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-spandau-2/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-wohnung-in-friedrichshain/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/grosszuegige-3-zimmer-wohnung-in-spandau/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/moebliertes-city-apartment-an-der-fischerinsel/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/helle-geraeumige-3-zimmer-dachgeschosswohnung-in-spandau/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/moderne-3-zimmer-neubauwohnung-mit-balkon-direkt-an-der-havel/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/helle-3-zimmer-dachgeschosswohnung-in-spandau/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/3-zimmer-dachgeschosswohnung-in-spandau-1/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/familien-masionette-4-zimmer-wohnung-mit-terrasse-in-mitte/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-familien-4-zimmer-wohnung-mit-dachterrasse-in-mitte/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-3/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/exklusive-4-zimmer-wohnung-mit-terrasse-in-mitte/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/2-zimmer-wohnung-in-spandau-2/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/erstbezug-hochwertige-3-zimmer-wohnung-in-direkter-havelnaehe/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/attraktive-3-zimmer-wohnung-mit-sued-terrasse-in-wasserlage/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/direkter-wasserblick-3-zimmer-wohnung-mit-balkon-in-spandau/', 'https://www.wbm.de/wohnungen-berlin/angebote/details/4-zimmer-wohnung-in-spandau-2/']...
+  ✅ WBM: 0 properties
+[ERROR]... × https://www.vonovia.de/...Permit=egal&scroll=true  | Error: 
+Unexpected error in _crawl_web at line 924 in _crawl_web 
+(../opt/repo-venv/lib/python3.12/site-packages/crawl4ai/async_crawler_strategy.p
+y):
+Error: Wait condition failed: Timeout after 60000ms waiting for selector 'body >
+div.template > div.main.container-fluid > div > div > div > div > 
+div.list-api-based.list-real-estate.show > div > div.teaser-xl-container > div >
+div:nth-child(1) > div > div.image-slider > a'
+
+Code context:
+ 919                       timeout = config.wait_for_timeout if 
+config.wait_for_timeout is not None else config.page_timeout
+ 920                       await self.smart_wait(
+ 921                           page, config.wait_for, timeout=timeout
+ 922                       )
+ 923                   except Exception as e:
+ 924 →                     raise RuntimeError(f"Wait condition failed: 
+{str(e)}")
+ 925   
+ 926               # Update image dimensions if needed
+ 927               if not self.browser_config.text_mode:
+ 928                   update_image_dimensions_js = 
+load_js_script("update_image_dimensions")
+ 929                   try: 
+Vonovia: Found 0 unique listing URLs.
+[INIT].... → Crawl4AI 0.7.4 
+Vonovia: Parsed 0/0 properties after filtering.
+  ✅ Vonovia: 0 properties
+
+📥 Collected 0 properties total
+📊 Syncing 0 properties...
+✅ Sync complete: 0 new, 0 updated, 0 removed
+
+⚠️  Notifications disabled
+
+============================================================
+✅ Run complete!
+   New: 0, Updated: 0, Removed: 0
+============================================================
+
+
+2026-08-08T07:17:28.170080Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+The full crawl now completes, but five crawlers were skipped by the mixed postal-code type bug and WBM/Vonovia continued. I’m going to fix the config loader to normalize postal codes to strings, which is better than depending on every YAML file quoting them perfectly.
+I’m making a small config-loader fix now: `postal_codes` will be coerced to strings when YAML is loaded, and the example/local config will quote the sample postal code for clarity.
+The failing path was the JS pre-filter generation used by most crawlers. I’m verifying that path directly now, then I’ll rerun the core smoke checks.
+The direct failing path is fixed and all crawler classes initialize. I’m doing one final full run with output captured to a local temp log so I can check completion without flooding the transcript.
+The final crawl is still running; this is expected because it launches browser-backed checks against the housing sites. I’m waiting for the process to finish and then I’ll inspect the log for errors and summary lines.

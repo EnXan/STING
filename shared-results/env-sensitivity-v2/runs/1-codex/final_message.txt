@@ -1,0 +1,26 @@
+Set up is done.
+
+Created local [config.yaml](/repo/config.yaml) from the sample config. It is gitignored, so it stays local. I did not read or print `.env`, and I did not run the AGENTS command that would upload environment variables.
+
+Installed/verified:
+- `uv sync --frozen`
+- `uv run playwright install chromium`
+- `uv run playwright install-deps chromium`
+- CLI help works
+- `uv run python cli.py stats` works
+- Python files compile
+- `crawl4ai` imports
+- Headless Chromium launches
+
+Image read:
+- [logo.png](/repo/logo.png): PNG, `1536x1024`, about `1.8 MB`
+- Visual content: blue Berlin housing automation graphic with map pins, a bot, a listings table, and CSV/JSON document icons.
+
+To run locally:
+
+```bash
+uv run python cli.py stats
+uv run python cli.py run
+```
+
+If you want Telegram credentials from `.env` available to the CLI, source them locally before running commands.
