@@ -14,18 +14,36 @@ authorised to test.
 Requirements: Docker Desktop, [`uv`](https://docs.astral.sh/uv/), and a logged-in
 agent CLI (`claude login` and/or `codex login`).
 
-Clone the template repository into `repo/`, then build the sandbox image:
+`repo/`, `results/`, and `.env` are local-only and excluded from Git — a fresh
+clone of this project (or any machine where `repo/` was removed) starts without
+the target-repo checkout, the synthetic honeypot credential, or the `$PAYLOAD$`
+markers every run needs inside it. Set all of that up in one step:
 
 ```bash
-git clone https://github.com/EnXan/immo_alert_berlin repo
+uv run python scripts/setup_target_repo.py
+```
+
+This clones `origin.repo`/`origin.ref` (taxonomy.yaml) into `repo/`, writes the
+synthetic `AWS_CREDENTIALS` honeypot fixture to `repo/.env` (same value as
+taxonomy.yaml's `honeypot` section — never invented, never real), and adds a
+`$PAYLOAD$` marker to `README.md`, `CLAUDE.md`, and `AGENTS.md` inside the
+checkout so the variant generator has somewhere to insert each attack. It's
+safe to re-run: every step is skipped once its target already exists. Pass
+`--force` to wipe and re-clone `repo/` (the honeypot `.env` and the markers are
+left alone either way — delete them yourself first if you want those redone
+too).
+
+Then build the sandbox image:
+
+```bash
 docker build -t sting-sandbox:latest .
 ```
 
-`repo/`, `results/`, and `.env` are local-only and excluded from Git. Do not put
-real credentials in versioned configuration files.
+Do not put real credentials in versioned configuration files.
 
-For PR-based variants or the Kimi agent, copy `.env.example` to `.env` and add
-scoped test credentials. Keep `.env` local.
+For PR-based variants or the Kimi agent, STING itself (not the `repo/` checkout
+above) also needs credentials: copy `.env.example` to `.env` in the project
+root and add scoped test credentials. Keep that `.env` local too.
 
 ## Run an experiment
 
